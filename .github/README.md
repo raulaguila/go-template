@@ -1,22 +1,22 @@
 <h1 align="center">Go API Template</h1>
 
 <p align="center">
-  <a href="https://github.com/raulaguila/go-apitemplate/releases" target="_blank" style="text-decoration: none;">
-    <img src="https://img.shields.io/github/v/release/raulaguila/go-apitemplate.svg?style=flat&labelColor=0D1117">
+  <a href="https://github.com/raulaguila/go-template/releases" target="_blank" style="text-decoration: none;">
+    <img src="https://img.shields.io/github/v/release/raulaguila/go-template.svg?style=flat&labelColor=0D1117">
   </a>
-  <img src="https://img.shields.io/github/repo-size/raulaguila/go-apitemplate?style=flat&labelColor=0D1117">
-  <img src="https://img.shields.io/github/stars/raulaguila/go-apitemplate?style=flat&labelColor=0D1117">
+  <img src="https://img.shields.io/github/repo-size/raulaguila/go-template?style=flat&labelColor=0D1117">
+  <img src="https://img.shields.io/github/stars/raulaguila/go-template?style=flat&labelColor=0D1117">
   <a href="../LICENSE" target="_blank" style="text-decoration: none;">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat&labelColor=0D1117">
   </a>
-  <a href="https://goreportcard.com/report/github.com/raulaguila/go-apitemplate" target="_blank" style="text-decoration: none;">
-    <img src="https://goreportcard.com/badge/github.com/raulaguila/go-apitemplate?style=flat&labelColor=0D1117">
+  <a href="https://goreportcard.com/report/github.com/raulaguila/go-template" target="_blank" style="text-decoration: none;">
+    <img src="https://goreportcard.com/badge/github.com/raulaguila/go-template?style=flat&labelColor=0D1117">
   </a>
-  <a href="https://github.com/raulaguila/go-apitemplate/actions?query=workflow%3Ago-test" target="_blank" style="text-decoration: none;">
-    <img src="https://github.com/raulaguila/go-apitemplate/actions/workflows/go-test.yml/badge.svg">
+  <a href="https://github.com/raulaguila/go-template/actions?query=workflow%3Ago-test" target="_blank" style="text-decoration: none;">
+    <img src="https://github.com/raulaguila/go-template/actions/workflows/go-test.yml/badge.svg">
   </a>
-  <a href="https://github.com/raulaguila/go-apitemplate/actions?query=workflow%3Ago-build" target="_blank" style="text-decoration: none;">
-    <img src="https://github.com/raulaguila/go-apitemplate/actions/workflows/go-build.yml/badge.svg">
+  <a href="https://github.com/raulaguila/go-template/actions?query=workflow%3Ago-build" target="_blank" style="text-decoration: none;">
+    <img src="https://github.com/raulaguila/go-template/actions/workflows/go-build.yml/badge.svg">
   </a>
 </p>
 
@@ -129,7 +129,7 @@ Authorization: Bearer <token>
 ## Contributors
 
 <a href="https://github.com/raulaguila" target="_blank">
-  <img src="https://contrib.rocks/image?repo=raulaguila/go-apitemplate">
+  <img src="https://contrib.rocks/image?repo=raulaguila/go-template">
 </a>
 
 ## License
