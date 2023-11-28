@@ -39,7 +39,7 @@ POSTGRES_INT_PORT='5432'                        # Postgres Container internal PO
 POSTGRES_EXT_PORT='5432'                        # Postgres Container external PORT
 POSTGRES_USER='admin'                           # Postgres USER
 POSTGRES_PASS='pgpassw'                         # Postgres PASS
-POSTGRES_BASE='goexpense'                       # Postgres BASE
+POSTGRES_BASE='gotemplate'                       # Postgres BASE
 
 ADM_NAME='Administrator'                        # User Default Name
 ADM_MAIL='admin@admin.com'                      # User Default Email
