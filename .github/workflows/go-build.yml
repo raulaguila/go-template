@@ -1,0 +1,45 @@
+name: go-build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
+  pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
+
+permissions:
+  contents: read
+
+jobs:
+  Build:
+    name: Golang build
+
+    strategy:
+      matrix:
+        go: [1.21.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          cache: false
+
+      - name: Run Build
+        run: go build -v ./...
+
+      - name: Run Test
+        run: go test -v ./...

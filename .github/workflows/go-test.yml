@@ -1,0 +1,46 @@
+name: go-test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
+  pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
+
+permissions:
+  contents: read
+
+jobs:
+  Test:
+    name: Golang test
+
+    strategy:
+      matrix:
+        go: [1.21.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          cache: false
+
+      - name: Run Test
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          timeout_minutes: 15
+          command: go test ./... -v -race -count=1

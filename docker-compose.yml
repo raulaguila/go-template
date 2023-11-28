@@ -1,0 +1,54 @@
+version: '3.1'
+
+name: go-template
+
+volumes:
+
+  go_template_postgre_volume:
+    name: go_template_postgre_volume
+
+networks:
+
+  go_template_network:
+    name: go_template_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 70.20.1.0/24
+          gateway: 70.20.1.1
+
+services:
+
+  postgres:
+
+    container_name: postgres
+    image: postgres:14.7-alpine
+    restart: always
+    volumes:
+      - go_template_postgre_volume:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_EXT_PORT}:${POSTGRES_INT_PORT}
+    environment:
+      - TZ=${TZ}
+      - POSTGRES_DB=${POSTGRES_BASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+    networks:
+      go_template_network:
+        ipv4_address: ${POSTGRES_INT_HOST}
+
+  backend:
+
+    container_name: backend
+    build: .
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - ${API_PORT}:${API_PORT}
+    tty: true
+    environment:
+      - TZ=${TZ}
+    networks:
+      go_template_network:
+        ipv4_address: ${API_HOST}
