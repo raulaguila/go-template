@@ -34,7 +34,7 @@ Authorization: Bearer {{accesstoken}}
 Content-Type: application/json
 
 {
-  "name": "Category Created"
+  "name": "Product Created"
 }
 
 ###
@@ -45,7 +45,7 @@ Authorization: Bearer {{accesstoken}}
 Content-Type: application/json
 
 {
-  "name": "Category Updated"
+  "name": "Product Updated"
 }
 
 ###

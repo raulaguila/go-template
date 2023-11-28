@@ -82,16 +82,16 @@ func NewProductHandler(route fiber.Router, productService domain.ProductService)
 
 	route.Use(middleware.MidAccess)
 
-	route.Get("", middleware.GetGenericFilter, handler.getCategories)
+	route.Get("", middleware.GetGenericFilter, handler.getProducts)
 	route.Post("", middleware.GetDTO(&dto.ProductInputDTO{}), handler.createProduct)
 	route.Get("/:"+httphelper.ParamID, handler.existProductByID, handler.getProductBydID)
 	route.Put("/:"+httphelper.ParamID, handler.existProductByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
 	route.Delete("/:"+httphelper.ParamID, handler.existProductByID, handler.deleteProduct)
 }
 
-// getCategories godoc
-// @Summary      Get categories
-// @Description  Get categories
+// getProducts godoc
+// @Summary      Get products
+// @Description  Get products
 // @Tags         Product
 // @Accept       json
 // @Produce      json
@@ -101,19 +101,19 @@ func NewProductHandler(route fiber.Router, productService domain.ProductService)
 // @Failure      500  {object}  httphelper.HTTPError
 // @Router       /product [get]
 // @Security	 Bearer
-func (h *ProductHandler) getCategories(c *fiber.Ctx) error {
-	categories, err := h.productService.GetCategories(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+func (h *ProductHandler) getProducts(c *fiber.Ctx) error {
+	products, err := h.productService.GetProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.productService.CountCategories(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+	count, err := h.productService.CountProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(&dto.ItemsOutputDTO{
-		Items: categories,
+		Items: products,
 		Count: count,
 	})
 }

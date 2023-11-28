@@ -85,7 +85,7 @@ definitions:
     type: object
   dto.PermissionsInputDTO:
     properties:
-      category_module:
+      product_module:
         example: true
         type: boolean
       profile_module:
@@ -98,7 +98,7 @@ definitions:
   dto.ProductInputDTO:
     properties:
       name:
-        example: Categoria 01
+        example: Produto 01
         type: string
     type: object
   dto.ProfileInputDTO:
@@ -263,7 +263,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get categories
+      description: Get products
       parameters:
       - description: Language responses
         in: query
@@ -305,7 +305,7 @@ paths:
             $ref: '#/definitions/httphelper.HTTPError'
       security:
       - Bearer: []
-      summary: Get categories
+      summary: Get products
       tags:
       - Product
     post:

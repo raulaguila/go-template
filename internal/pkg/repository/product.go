@@ -35,12 +35,12 @@ func (s *productRepository) GetProductByID(ctx context.Context, productID uint) 
 	return product, s.postgres.WithContext(ctx).First(product, productID).Error
 }
 
-func (s *productRepository) GetCategories(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
-	categories := &[]domain.Product{}
-	return categories, s.applyFilter(ctx, filter, true).Find(categories).Error
+func (s *productRepository) GetProducts(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
+	products := &[]domain.Product{}
+	return products, s.applyFilter(ctx, filter, true).Find(products).Error
 }
 
-func (s *productRepository) CountCategories(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+func (s *productRepository) CountProducts(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
 	var count int64
 	return count, s.applyFilter(ctx, filter, false).Model(&domain.Product{}).Count(&count).Error
 }

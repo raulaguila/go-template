@@ -23,14 +23,14 @@ func (s *productService) GetProductByID(ctx context.Context, productID uint) (*d
 	return s.productRepository.GetProductByID(ctx, productID)
 }
 
-// Implementation of 'GetCategories'.
-func (s *productService) GetCategories(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
-	return s.productRepository.GetCategories(ctx, filter)
+// Implementation of 'GetProducts'.
+func (s *productService) GetProducts(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
+	return s.productRepository.GetProducts(ctx, filter)
 }
 
-// Implementation of 'CountCategories'.
-func (s *productService) CountCategories(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
-	return s.productRepository.CountCategories(ctx, filter)
+// Implementation of 'CountProducts'.
+func (s *productService) CountProducts(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+	return s.productRepository.CountProducts(ctx, filter)
 }
 
 // Implementation of 'CreateProduct'.
