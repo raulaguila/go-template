@@ -209,7 +209,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Get categories",
+                "description": "Get products",
                 "consumes": [
                     "application/json"
                 ],
@@ -219,7 +219,7 @@ const docTemplate = `{
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get categories",
+                "summary": "Get products",
                 "parameters": [
                     {
                         "type": "string",
@@ -1396,7 +1396,7 @@ const docTemplate = `{
         "dto.PermissionsInputDTO": {
             "type": "object",
             "properties": {
-                "category_module": {
+                "product_module": {
                     "type": "boolean",
                     "example": true
                 },
@@ -1415,7 +1415,7 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "example": "Categoria 01"
+                    "example": "Produto 01"
                 }
             }
         },

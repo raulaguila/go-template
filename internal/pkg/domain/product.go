@@ -18,8 +18,8 @@ type (
 
 	ProductRepository interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetCategories(context.Context, *gormhelper.Filter) (*[]Product, error)
-		CountCategories(context.Context, *gormhelper.Filter) (int64, error)
+		GetProducts(context.Context, *gormhelper.Filter) (*[]Product, error)
+		CountProducts(context.Context, *gormhelper.Filter) (int64, error)
 		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error
@@ -27,8 +27,8 @@ type (
 
 	ProductService interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetCategories(context.Context, *gormhelper.Filter) (*[]Product, error)
-		CountCategories(context.Context, *gormhelper.Filter) (int64, error)
+		GetProducts(context.Context, *gormhelper.Filter) (*[]Product, error)
+		CountProducts(context.Context, *gormhelper.Filter) (int64, error)
 		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error

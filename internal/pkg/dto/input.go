@@ -2,7 +2,7 @@ package dto
 
 type (
 	ProductInputDTO struct {
-		Name *string `json:"name" example:"Categoria 01"`
+		Name *string `json:"name" example:"Produto 01"`
 	}
 
 	PermissionsInputDTO struct {
