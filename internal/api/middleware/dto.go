@@ -17,7 +17,7 @@ func GetDTO(data interface{}) fiber.Handler {
 		if err := c.BodyParser(data); err != nil {
 			log.Println(err.Error())
 			messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-			return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrInvalidDatas)
+			return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrInvalidDatas)
 		}
 
 		c.Locals(httphelper.LocalDTO, data)

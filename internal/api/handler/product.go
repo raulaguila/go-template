@@ -23,11 +23,11 @@ type ProductHandler struct {
 func (ProductHandler) foreignKeyViolatedMethod(c *fiber.Ctx, translation *i18n.Translation) error {
 	switch c.Method() {
 	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrProductNotFound)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProductNotFound)
 	case fiber.MethodDelete:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrProductUsed)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProductUsed)
 	default:
-		return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+		return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 	}
 }
 
@@ -36,19 +36,19 @@ func (s ProductHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch postgresql.HandlerError(err) {
 	case postgresql.ErrDuplicatedKey:
-		return httphelper.NewHTTPError(c, fiber.StatusConflict, translation.ErrProductRegistered)
+		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, translation.ErrProductRegistered)
 	case postgresql.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedMethod(c, translation)
 	case postgresql.ErrUndefinedColumn:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrUndefinedColumn)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 }
 
 func (h *ProductHandler) existProductByID(c *fiber.Ctx) error {
@@ -56,17 +56,17 @@ func (h *ProductHandler) existProductByID(c *fiber.Ctx) error {
 
 	targetedID, err := c.ParamsInt(httphelper.ParamID)
 	if err != nil || targetedID <= 0 {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrInvalidId)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
 	}
 
 	product, err := h.productService.GetProductByID(c.Context(), uint(targetedID))
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPError(c, fiber.StatusNotFound, translation.ErrProductNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrProductNotFound)
 		default:
 			log.Println(err.Error())
-			return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 		}
 	}
 
@@ -98,7 +98,7 @@ func NewProductHandler(route fiber.Router, productService domain.ProductService)
 // @Param        lang query string false "Language responses"
 // @Param        filter query gormhelper.Filter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product [get]
 // @Security	 Bearer
 func (h *ProductHandler) getProducts(c *fiber.Ctx) error {
@@ -127,9 +127,9 @@ func (h *ProductHandler) getProducts(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id   path			int			true        "Product ID"
 // @Success      200  {object}  domain.Product
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product/{id} [get]
 // @Security	 Bearer
 func (h *ProductHandler) getProductBydID(c *fiber.Ctx) error {
@@ -145,9 +145,9 @@ func (h *ProductHandler) getProductBydID(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        product body dto.ProductInputDTO true "Product model"
 // @Success      201  {object}  domain.Product
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      409  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      409  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product [post]
 // @Security	 Bearer
 func (h *ProductHandler) createProduct(c *fiber.Ctx) error {
@@ -174,9 +174,9 @@ func (h *ProductHandler) createProduct(c *fiber.Ctx) error {
 // @Param        id     path    int     true        "Product ID"
 // @Param        product body dto.ProductInputDTO true "Product model"
 // @Success      200  {object}  domain.Product
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product/{id} [put]
 // @Security	 Bearer
 func (h *ProductHandler) updateProduct(c *fiber.Ctx) error {
@@ -202,8 +202,8 @@ func (h *ProductHandler) updateProduct(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "Product ID"
 // @Success      204  {object}  nil
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product/{id} [delete]
 // @Security	 Bearer
 func (h *ProductHandler) deleteProduct(c *fiber.Ctx) error {

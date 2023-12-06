@@ -87,13 +87,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -137,13 +137,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -190,13 +190,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -271,7 +271,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -320,19 +320,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -381,19 +381,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -449,19 +449,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -505,13 +505,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -586,7 +586,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -635,19 +635,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -696,19 +696,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -764,19 +764,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -820,13 +820,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -907,7 +907,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -956,19 +956,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1021,13 +1021,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1076,19 +1076,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1144,19 +1144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1200,13 +1200,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1255,13 +1255,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1452,7 +1452,7 @@ const docTemplate = `{
                 }
             }
         },
-        "httphelper.HTTPError": {
+        "httphelper.HTTPResponse": {
             "type": "object",
             "properties": {
                 "code": {

@@ -27,7 +27,7 @@ func Auth(base64key string, ar domain.AuthService) fiber.Handler {
 			return c.Next()
 		},
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return httphelper.NewHTTPError(c, fiber.StatusUnauthorized, err)
+			return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, err)
 		},
 		Validator: func(c *fiber.Ctx, key string) (bool, error) {
 			user, err := ar.Me(c.Context(), key, base64key)

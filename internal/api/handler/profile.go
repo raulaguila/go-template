@@ -25,19 +25,19 @@ func (ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch postgresql.HandlerError(err) {
 	case postgresql.ErrDuplicatedKey:
-		return httphelper.NewHTTPError(c, fiber.StatusConflict, messages.ErrProfileRegistered)
+		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
 	case postgresql.ErrForeignKeyViolated:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrProfileUsed)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrProfileUsed)
 	case postgresql.ErrUndefinedColumn:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 func (h *ProfileHandler) existProfileByID(c *fiber.Ctx) error {
@@ -45,17 +45,17 @@ func (h *ProfileHandler) existProfileByID(c *fiber.Ctx) error {
 
 	targetedID, err := c.ParamsInt(httphelper.ParamID)
 	if err != nil || targetedID <= 0 {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrInvalidId)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
 	}
 
 	profile, err := h.profileService.GetProfileByID(c.Context(), uint(targetedID))
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPError(c, fiber.StatusNotFound, translation.ErrProfileNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrProfileNotFound)
 		default:
 			log.Println(err.Error())
-			return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 		}
 	}
 
@@ -87,7 +87,7 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService) {
 // @Param        lang query string false "Language responses"
 // @Param        filter query gormhelper.Filter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile [get]
 // @Security	 Bearer
 func (h *ProfileHandler) getProfiles(c *fiber.Ctx) error {
@@ -116,9 +116,9 @@ func (h *ProfileHandler) getProfiles(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        profile body dto.ProfileInputDTO true "Profile model"
 // @Success      201  {object}  domain.Profile
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      409  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      409  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile [post]
 // @Security	 Bearer
 func (h *ProfileHandler) createProfile(c *fiber.Ctx) error {
@@ -144,9 +144,9 @@ func (h *ProfileHandler) createProfile(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "Profile ID"
 // @Success      200  {object}  domain.Profile
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile/{id} [get]
 // @Security	 Bearer
 func (h *ProfileHandler) getProfile(c *fiber.Ctx) error {
@@ -163,9 +163,9 @@ func (h *ProfileHandler) getProfile(c *fiber.Ctx) error {
 // @Param        id     path    int     true        "Profile ID"
 // @Param        profile body dto.ProfileInputDTO true "Profile model"
 // @Success      200  {object}  domain.Profile
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile/{id} [put]
 // @Security	 Bearer
 func (h *ProfileHandler) updateProfile(c *fiber.Ctx) error {
@@ -186,8 +186,8 @@ func (h *ProfileHandler) updateProfile(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "Profile ID"
 // @Success      204  {object}  nil
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile/{id} [delete]
 // @Security	 Bearer
 func (h *ProfileHandler) deleteProfile(c *fiber.Ctx) error {

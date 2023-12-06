@@ -56,7 +56,7 @@ func HandleRequests(app *fiber.App, postgresdb *gorm.DB) {
 	// Prepare an endpoint for 'Not Found'.
 	app.All("*", func(c *fiber.Ctx) error {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPError(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
+		return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
 	})
 
 	log.Fatal(app.Listen(":" + os.Getenv("API_PORT")))

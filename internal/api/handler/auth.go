@@ -20,33 +20,33 @@ func (AuthHandler) handlerError(c *fiber.Ctx, err error) error {
 	messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 func (s *AuthHandler) checkCredentials(c *fiber.Ctx) error {
 	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 	credentials := &dto.LoginInputDTO{}
 	if err := c.BodyParser(credentials); err != nil {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrInvalidDatas)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidDatas)
 	}
 
 	user, err := s.authService.GetUserByMail(c.Context(), credentials.Email)
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPError(c, fiber.StatusUnauthorized, translation.ErrUserNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrUserNotFound)
 		default:
 			log.Println(err.Error())
-			return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 		}
 	}
 
 	if !user.ValidatePassword(credentials.Password) {
-		return httphelper.NewHTTPError(c, fiber.StatusUnauthorized, translation.ErrIncorrectPassword)
+		return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrIncorrectPassword)
 	}
 
 	if !user.Status || user.New {
-		return httphelper.NewHTTPError(c, fiber.StatusUnauthorized, translation.ErrDisabledUser)
+		return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrDisabledUser)
 	}
 
 	c.Locals(httphelper.LocalObject, user)
@@ -73,8 +73,8 @@ func NewAuthHandler(route fiber.Router, as domain.AuthService) {
 // @Param        lang query string false "Language responses"
 // @Param        credentials body dto.LoginInputDTO true "Credentials model"
 // @Success      200  {array}   domain.AuthResponse
-// @Failure      401  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      401  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /auth [post]
 func (s *AuthHandler) login(c *fiber.Ctx) error {
 	authResponse, err := s.authService.Login(c.Context(), c.Locals(httphelper.LocalObject).(*domain.User))
@@ -98,8 +98,8 @@ func (s *AuthHandler) login(c *fiber.Ctx) error {
 // @Param        Authorization header string false "User token"
 // @Param        lang query string false "Language responses"
 // @Success      200  {array}   domain.User
-// @Failure      401  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      401  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /auth [get]
 // @Security	 Bearer
 func (s *AuthHandler) me(c *fiber.Ctx) error {
@@ -115,8 +115,8 @@ func (s *AuthHandler) me(c *fiber.Ctx) error {
 // @Param        Authorization header string false "User token"
 // @Param        lang query string false "Language responses"
 // @Success      200  {array}   domain.AuthResponse
-// @Failure      401  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      401  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /auth [put]
 func (s *AuthHandler) refresh(c *fiber.Ctx) error {
 	authResponse, err := s.authService.Refresh(c.Context(), c.Locals(httphelper.LocalUser).(*domain.User))

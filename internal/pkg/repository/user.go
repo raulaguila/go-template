@@ -26,7 +26,7 @@ type userRepository struct {
 func (s *userRepository) applyFilter(ctx context.Context, filter *gormhelper.UserFilter, pag bool) *gorm.DB {
 	postgres := s.postgres.WithContext(ctx)
 	if filter.ProfileID != 0 {
-		postgres = postgres.Where("profile_id = ?", filter.ProfileID)
+		postgres = postgres.Where(domain.UserTableName+".profile_id = ?", filter.ProfileID)
 	}
 	postgres = postgres.Joins(fmt.Sprintf("JOIN %v ON %v.id = %v.profile_id", domain.ProfileTableName, domain.ProfileTableName, domain.UserTableName))
 	postgres = filter.ApplySearchLike(postgres, domain.UserTableName+".name", domain.UserTableName+".mail", domain.ProfileTableName+".name")
