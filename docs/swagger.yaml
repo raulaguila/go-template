@@ -137,8 +137,8 @@ info:
   contact:
     email: email@email.com
     name: Raul del Aguila
-  description: Expenses API.
-  title: Go - Expenses API
+  description: Template API.
+  title: Go - Template API
 paths:
   /:
     get:

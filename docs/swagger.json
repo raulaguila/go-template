@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Expenses API.",
-        "title": "Go - Expenses API",
+        "description": "Template API.",
+        "title": "Go - Template API",
         "contact": {
             "name": "Raul del Aguila",
             "email": "email@email.com"
