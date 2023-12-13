@@ -1,4 +1,4 @@
-@host = http://127.0.0.1:9001
+@host = http://127.0.0.1:9000
 @lang = en
 @accesstoken = {{login.response.body.$.accesstoken}}
 @id = {{create.response.body.$.id}}

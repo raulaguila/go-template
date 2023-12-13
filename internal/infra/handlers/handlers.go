@@ -43,20 +43,22 @@ func HandleRequests(app *fiber.App, postgresdb *gorm.DB) {
 	authService := service.NewAuthService(authRepository)
 	productService := service.NewProductService(productRepository)
 
+	objMiddleware := middleware.NewObjectMiddleware(postgresdb)
+
 	middleware.MidAccess = middleware.Auth(os.Getenv("ACCESS_TOKEN_PUBLIC"), authService)
 	middleware.MidRefresh = middleware.Auth(os.Getenv("RFRESH_TOKEN_PUBLIC"), authService)
 
 	// Prepare endpoints for the API.
 	handler.NewMiscHandler(app.Group(""))
-	handler.NewProfileHandler(app.Group("/profile"), profileService)
-	handler.NewUserHandler(app.Group("/user"), userService)
+	handler.NewProfileHandler(app.Group("/profile"), profileService, objMiddleware)
+	handler.NewUserHandler(app.Group("/user"), userService, objMiddleware)
 	handler.NewAuthHandler(app.Group("/auth"), authService)
-	handler.NewProductHandler(app.Group("/product"), productService)
+	handler.NewProductHandler(app.Group("/product"), productService, objMiddleware)
 
 	// Prepare an endpoint for 'Not Found'.
 	app.All("*", func(c *fiber.Ctx) error {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
 	})
 
 	log.Fatal(app.Listen(":" + os.Getenv("API_PORT")))

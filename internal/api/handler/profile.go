@@ -13,7 +13,6 @@ import (
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/postgresql"
 	"github.com/raulaguila/go-template/pkg/validator"
-	"gorm.io/gorm"
 )
 
 type ProfileHandler struct {
@@ -25,46 +24,23 @@ func (ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch postgresql.HandlerError(err) {
 	case postgresql.ErrDuplicatedKey:
-		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
 	case postgresql.ErrForeignKeyViolated:
-		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrProfileUsed)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrProfileUsed)
 	case postgresql.ErrUndefinedColumn:
-		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
-}
-
-func (h *ProfileHandler) existProfileByID(c *fiber.Ctx) error {
-	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-
-	targetedID, err := c.ParamsInt(httphelper.ParamID)
-	if err != nil || targetedID <= 0 {
-		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
-	}
-
-	profile, err := h.profileService.GetProfileByID(c.Context(), uint(targetedID))
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrProfileNotFound)
-		default:
-			log.Println(err.Error())
-			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
-		}
-	}
-
-	c.Locals(httphelper.LocalObject, profile)
-	return c.Next()
+	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 // Creates a new handler.
-func NewProfileHandler(route fiber.Router, ps domain.ProfileService) {
+func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middleware.ObjectMiddleware) {
 	handler := &ProfileHandler{
 		profileService: ps,
 	}
@@ -73,9 +49,9 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService) {
 
 	route.Get("", middleware.GetGenericFilter, handler.getProfiles)
 	route.Post("", middleware.GetDTO(&dto.ProfileInputDTO{}), handler.createProfile)
-	route.Get("/:"+httphelper.ParamID, handler.existProfileByID, handler.getProfile)
-	route.Put("/:"+httphelper.ParamID, handler.existProfileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
-	route.Delete("/:"+httphelper.ParamID, handler.existProfileByID, handler.deleteProfile)
+	route.Get("/:"+httphelper.ParamID, mid.ProfileByID, handler.getProfile)
+	route.Put("/:"+httphelper.ParamID, mid.ProfileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
+	route.Delete("/:"+httphelper.ParamID, mid.ProfileByID, handler.deleteProfile)
 }
 
 // getProfiles godoc

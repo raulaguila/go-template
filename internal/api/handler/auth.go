@@ -20,33 +20,33 @@ func (AuthHandler) handlerError(c *fiber.Ctx, err error) error {
 	messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 func (s *AuthHandler) checkCredentials(c *fiber.Ctx) error {
 	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 	credentials := &dto.LoginInputDTO{}
 	if err := c.BodyParser(credentials); err != nil {
-		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidDatas)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrInvalidDatas)
 	}
 
 	user, err := s.authService.GetUserByMail(c.Context(), credentials.Email)
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrUserNotFound)
+			return httphelper.NewHTTPErrorResponse(c, fiber.StatusUnauthorized, translation.ErrUserNotFound)
 		default:
 			log.Println(err.Error())
-			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+			return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 		}
 	}
 
 	if !user.ValidatePassword(credentials.Password) {
-		return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrIncorrectPassword)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusUnauthorized, translation.ErrIncorrectPassword)
 	}
 
 	if !user.Status || user.New {
-		return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrDisabledUser)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusUnauthorized, translation.ErrDisabledUser)
 	}
 
 	c.Locals(httphelper.LocalObject, user)
