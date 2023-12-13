@@ -3,7 +3,6 @@ COMPOSE_COMMAND = docker compose --env-file configs/.env
 .PHONY: all
 all: help
 help: ## Display help screen
-	@clear
 	@echo "Usage:"
 	@echo "	make [COMMAND]"
 	@echo "	make help\n"

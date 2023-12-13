@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Expenses API.",
-        "title": "Go - Expenses API",
+        "description": "Template API.",
+        "title": "Go - Template API",
         "contact": {
             "name": "Raul del Aguila",
             "email": "email@email.com"
@@ -78,13 +78,13 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -128,13 +128,13 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -181,13 +181,13 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -262,7 +262,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -311,19 +311,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -372,19 +372,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -440,19 +440,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -496,13 +496,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -577,7 +577,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -626,19 +626,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -687,19 +687,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -755,19 +755,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -811,13 +811,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -898,7 +898,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -947,19 +947,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1012,13 +1012,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1067,19 +1067,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1135,19 +1135,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1191,13 +1191,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1246,13 +1246,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httphelper.HTTPError"
+                            "$ref": "#/definitions/httphelper.HTTPResponse"
                         }
                     }
                 }
@@ -1443,7 +1443,7 @@
                 }
             }
         },
-        "httphelper.HTTPError": {
+        "httphelper.HTTPResponse": {
             "type": "object",
             "properties": {
                 "code": {

@@ -24,11 +24,11 @@ type UserHandler struct {
 func (s UserHandler) foreignKeyViolatedFrom(c *fiber.Ctx, messages *i18n.Translation) error {
 	switch c.Method() {
 	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrProfileNotFound)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrProfileNotFound)
 	case fiber.MethodDelete:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrUserUsed)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUserUsed)
 	default:
-		return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 	}
 }
 
@@ -37,46 +37,19 @@ func (s UserHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch postgresql.HandlerError(err) {
 	case postgresql.ErrDuplicatedKey:
-		return httphelper.NewHTTPError(c, fiber.StatusConflict, messages.ErrUserRegistered)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrUserRegistered)
 	case postgresql.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedFrom(c, messages)
 	case postgresql.ErrUndefinedColumn:
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, messages.ErrGeneric)
-}
-
-func (s UserHandler) existHandlerError(c *fiber.Ctx, err error, translation *i18n.Translation) error {
-	switch err {
-	case gorm.ErrRecordNotFound:
-		return httphelper.NewHTTPError(c, fiber.StatusNotFound, translation.ErrUserNotFound)
-	default:
-		log.Println(err.Error())
-		return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, translation.ErrGeneric)
-	}
-}
-
-func (h *UserHandler) existUserByID(c *fiber.Ctx) error {
-	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-
-	targetedID, err := c.ParamsInt(httphelper.ParamID)
-	if err != nil || targetedID <= 0 {
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, translation.ErrInvalidId)
-	}
-
-	user, err := h.userService.GetUserByID(c.Context(), uint(targetedID))
-	if err != nil {
-		h.existHandlerError(c, err, translation)
-	}
-
-	c.Locals(httphelper.LocalObject, user)
-	return c.Next()
+	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
@@ -85,7 +58,13 @@ func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
 	mail := strings.ReplaceAll(c.Params(httphelper.ParamMail), "%40", "@")
 	user, err := h.userService.GetUserByMail(c.Context(), mail)
 	if err != nil {
-		h.existHandlerError(c, err, translation)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, translation.ErrUserNotFound)
+		default:
+			log.Println(err.Error())
+			return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+		}
 	}
 
 	c.Locals(httphelper.LocalObject, user)
@@ -93,7 +72,7 @@ func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
 }
 
 // Creates a new handler.
-func NewUserHandler(route fiber.Router, us domain.UserService) {
+func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.ObjectMiddleware) {
 	handler := &UserHandler{
 		userService: us,
 	}
@@ -104,10 +83,10 @@ func NewUserHandler(route fiber.Router, us domain.UserService) {
 
 	route.Get("", middleware.GetUserFilter, handler.getUsers)
 	route.Post("", middleware.GetDTO(&dto.UserInputDTO{}), handler.createUser)
-	route.Get("/:"+httphelper.ParamID, handler.existUserByID, handler.getUser)
-	route.Put("/:"+httphelper.ParamID, handler.existUserByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
-	route.Delete("/:"+httphelper.ParamID, handler.existUserByID, handler.deleteUser)
-	route.Patch("/:"+httphelper.ParamID+"/reset", handler.existUserByID, handler.resetUser)
+	route.Get("/:"+httphelper.ParamID, mid.UserByID, handler.getUser)
+	route.Put("/:"+httphelper.ParamID, mid.UserByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
+	route.Delete("/:"+httphelper.ParamID, mid.UserByID, handler.deleteUser)
+	route.Patch("/:"+httphelper.ParamID+"/reset", mid.UserByID, handler.resetUser)
 }
 
 // getUsers godoc
@@ -119,7 +98,7 @@ func NewUserHandler(route fiber.Router, us domain.UserService) {
 // @Param        lang query string false "Language responses"
 // @Param        filter query gormhelper.UserFilter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user [get]
 // @Security	 Bearer
 func (h *UserHandler) getUsers(c *fiber.Ctx) error {
@@ -148,9 +127,9 @@ func (h *UserHandler) getUsers(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        user body dto.UserInputDTO true "User model"
 // @Success      201  {object}  domain.User
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      409  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      409  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user [post]
 // @Security	 Bearer
 func (h *UserHandler) createUser(c *fiber.Ctx) error {
@@ -176,9 +155,9 @@ func (h *UserHandler) createUser(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "User ID"
 // @Success      200  {object}  domain.User
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user/{id} [get]
 // @Security	 Bearer
 func (h *UserHandler) getUser(c *fiber.Ctx) error {
@@ -195,9 +174,9 @@ func (h *UserHandler) getUser(c *fiber.Ctx) error {
 // @Param        id     path    int     true        "User ID"
 // @Param        user body dto.UserInputDTO true "User model"
 // @Success      200  {object}  domain.User
-// @Failure      400  {object}  httphelper.HTTPError
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      400  {object}  httphelper.HTTPResponse
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user/{id} [put]
 // @Security	 Bearer
 func (h *UserHandler) updateUser(c *fiber.Ctx) error {
@@ -223,8 +202,8 @@ func (h *UserHandler) updateUser(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "User ID"
 // @Success      204  {object}  nil
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user/{id} [delete]
 // @Security	 Bearer
 func (h *UserHandler) deleteUser(c *fiber.Ctx) error {
@@ -244,8 +223,8 @@ func (h *UserHandler) deleteUser(c *fiber.Ctx) error {
 // @Param        lang query string false "Language responses"
 // @Param        id     path    int     true        "User ID"
 // @Success      200  {object}  domain.User
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user/{id}/reset [patch]
 // @Security	 Bearer
 func (h *UserHandler) resetUser(c *fiber.Ctx) error {
@@ -275,20 +254,20 @@ func (h *UserHandler) resetUser(c *fiber.Ctx) error {
 // @Param        email     path    string     true        "User email"
 // @Param        password body dto.PasswordInputDTO true "Password model"
 // @Success      200  {object}  domain.User
-// @Failure      404  {object}  httphelper.HTTPError
-// @Failure      500  {object}  httphelper.HTTPError
+// @Failure      404  {object}  httphelper.HTTPResponse
+// @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user/{email}/passw [patch]
 func (h *UserHandler) passwordUser(c *fiber.Ctx) error {
 	pass := c.Locals(httphelper.LocalDTO).(*dto.PasswordInputDTO)
 	if !pass.IsValid() {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrPassUnmatch)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrPassUnmatch)
 	}
 
 	user := c.Locals(httphelper.LocalObject).(*domain.User)
 	if !user.New {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPError(c, fiber.StatusBadRequest, messages.ErrUserHasPass)
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUserHasPass)
 	}
 
 	if err := h.userService.PasswordUser(c.Context(), user, pass); err != nil {

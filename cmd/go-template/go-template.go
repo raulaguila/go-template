@@ -21,8 +21,8 @@ import (
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 )
 
-// @title 							Go - Expenses API
-// @description 					Expenses API.
+// @title 							Go - Template API
+// @description 					Template API.
 
 // @contact.name					Raul del Aguila
 // @contact.email					email@email.com
@@ -46,7 +46,7 @@ func main() {
 		AppName:               "Go - Expense API",
 		ReduceMemoryUsage:     false,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return httphelper.NewHTTPError(c, fiber.StatusInternalServerError, err)
+			return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, err)
 		},
 	})
 
@@ -84,7 +84,7 @@ func main() {
 			Expiration: time.Minute,
 			LimitReached: func(c *fiber.Ctx) error {
 				messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-				return httphelper.NewHTTPError(c, fiber.StatusTooManyRequests, messages.ErrManyRequest)
+				return httphelper.NewHTTPErrorResponse(c, fiber.StatusTooManyRequests, messages.ErrManyRequest)
 			},
 		}),
 	)
