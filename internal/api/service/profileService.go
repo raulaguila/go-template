@@ -5,7 +5,7 @@ import (
 
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 )
 
 func NewProfileService(r domain.ProfileRepository) domain.ProfileService {
@@ -24,12 +24,12 @@ func (s *profileService) GetProfileByID(ctx context.Context, profileID uint) (*d
 }
 
 // Implementation of 'GetProfiles'.
-func (s *profileService) GetProfiles(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Profile, error) {
+func (s *profileService) GetProfiles(ctx context.Context, filter *filter.Filter) (*[]domain.Profile, error) {
 	return s.profileRepository.GetProfiles(ctx, filter)
 }
 
 // Implementation of 'CountProfiles'.
-func (s *profileService) CountProfiles(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+func (s *profileService) CountProfiles(ctx context.Context, filter *filter.Filter) (int64, error) {
 	return s.profileRepository.CountProfiles(ctx, filter)
 }
 

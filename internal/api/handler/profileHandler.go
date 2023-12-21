@@ -9,24 +9,36 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/postgresql"
 	"github.com/raulaguila/go-template/pkg/validator"
+	"gorm.io/gorm/clause"
 )
 
 type ProfileHandler struct {
 	profileService domain.ProfileService
 }
 
-func (ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
+func (ProfileHandler) foreignKeyViolatedMethod(c *fiber.Ctx, translation *i18n.Translation) error {
+	switch c.Method() {
+	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProfileNotFound)
+	case fiber.MethodDelete:
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProfileUsed)
+	default:
+		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+	}
+}
+
+func (s ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
 	messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
 	switch postgresql.HandlerError(err) {
 	case postgresql.ErrDuplicatedKey:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
 	case postgresql.ErrForeignKeyViolated:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrProfileUsed)
+		return s.foreignKeyViolatedMethod(c, messages)
 	case postgresql.ErrUndefinedColumn:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
@@ -40,18 +52,19 @@ func (ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
 }
 
 // Creates a new handler.
-func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middleware.ObjectMiddleware) {
+func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middleware.RequesttMiddleware) {
 	handler := &ProfileHandler{
 		profileService: ps,
 	}
 
 	route.Use(middleware.MidAccess)
+	profileByID := mid.ItemByID(&domain.Profile{}, domain.ProfileTableName, clause.Associations)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProfiles)
 	route.Post("", middleware.GetDTO(&dto.ProfileInputDTO{}), handler.createProfile)
-	route.Get("/:"+httphelper.ParamID, mid.ProfileByID, handler.getProfile)
-	route.Put("/:"+httphelper.ParamID, mid.ProfileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
-	route.Delete("/:"+httphelper.ParamID, mid.ProfileByID, handler.deleteProfile)
+	route.Get("/:"+httphelper.ParamID, profileByID, handler.getProfile)
+	route.Put("/:"+httphelper.ParamID, profileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
+	route.Delete("/:"+httphelper.ParamID, profileByID, handler.deleteProfile)
 }
 
 // getProfiles godoc
@@ -61,18 +74,18 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middle
 // @Accept       json
 // @Produce      json
 // @Param        lang query string false "Language responses"
-// @Param        filter query gormhelper.Filter false "Optional Filter"
+// @Param        filter query filter.Filter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
 // @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /profile [get]
 // @Security	 Bearer
 func (h *ProfileHandler) getProfiles(c *fiber.Ctx) error {
-	profiles, err := h.profileService.GetProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+	profiles, err := h.profileService.GetProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.profileService.CountProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+	count, err := h.profileService.CountProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}

@@ -2,7 +2,7 @@ package configs
 
 import (
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 	"time"
 
@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	err := godotenv.Load(filepath.Join("configs", ".env"))
+	err := godotenv.Load(path.Join("configs", ".env"))
 	helpers.PanicIfErr(err)
 
 	time.Local, err = time.LoadLocation(os.Getenv("TZ"))
@@ -28,7 +28,7 @@ func loadMessages() error {
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	for _, lang := range strings.Split(os.Getenv("SYS_LANGUAGES"), ",") {
-		if _, err := bundle.LoadMessageFile(filepath.Join("configs", "i18n", "active."+lang+".toml")); err != nil {
+		if _, err := bundle.LoadMessageFile(path.Join("configs", "i18n", "active."+lang+".toml")); err != nil {
 			return err
 		}
 

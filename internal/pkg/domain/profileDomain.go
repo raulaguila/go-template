@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"github.com/raulaguila/go-template/pkg/validator"
 )
 
@@ -27,8 +27,8 @@ type (
 
 	ProfileRepository interface {
 		GetProfileByID(context.Context, uint) (*Profile, error)
-		GetProfiles(context.Context, *gormhelper.Filter) (*[]Profile, error)
-		CountProfiles(context.Context, *gormhelper.Filter) (int64, error)
+		GetProfiles(context.Context, *filter.Filter) (*[]Profile, error)
+		CountProfiles(context.Context, *filter.Filter) (int64, error)
 		CreateProfile(context.Context, *dto.ProfileInputDTO) (uint, error)
 		UpdateProfile(context.Context, *Profile, *dto.ProfileInputDTO) error
 		DeleteProfile(context.Context, *Profile) error
@@ -36,8 +36,8 @@ type (
 
 	ProfileService interface {
 		GetProfileByID(context.Context, uint) (*Profile, error)
-		GetProfiles(context.Context, *gormhelper.Filter) (*[]Profile, error)
-		CountProfiles(context.Context, *gormhelper.Filter) (int64, error)
+		GetProfiles(context.Context, *filter.Filter) (*[]Profile, error)
+		CountProfiles(context.Context, *filter.Filter) (int64, error)
 		CreateProfile(context.Context, *dto.ProfileInputDTO) (uint, error)
 		UpdateProfile(context.Context, *Profile, *dto.ProfileInputDTO) error
 		DeleteProfile(context.Context, *Profile) error

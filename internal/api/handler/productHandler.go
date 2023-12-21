@@ -9,7 +9,7 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/postgresql"
 	"github.com/raulaguila/go-template/pkg/validator"
@@ -51,18 +51,19 @@ func (s ProductHandler) handlerError(c *fiber.Ctx, err error) error {
 }
 
 // Creates a new handler.
-func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middleware.ObjectMiddleware) {
+func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middleware.RequesttMiddleware) {
 	handler := &ProductHandler{
 		productService: ps,
 	}
 
 	route.Use(middleware.MidAccess)
+	productByID := mid.ItemByID(&domain.Product{}, domain.ProductTableName)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProducts)
 	route.Post("", middleware.GetDTO(&dto.ProductInputDTO{}), handler.createProduct)
-	route.Get("/:"+httphelper.ParamID, mid.ProductByID, handler.getProductBydID)
-	route.Put("/:"+httphelper.ParamID, mid.ProductByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
-	route.Delete("/:"+httphelper.ParamID, mid.ProductByID, handler.deleteProduct)
+	route.Get("/:"+httphelper.ParamID, productByID, handler.getProductBydID)
+	route.Put("/:"+httphelper.ParamID, productByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
+	route.Delete("/:"+httphelper.ParamID, productByID, handler.deleteProduct)
 }
 
 // getProducts godoc
@@ -72,18 +73,18 @@ func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middle
 // @Accept       json
 // @Produce      json
 // @Param        lang query string false "Language responses"
-// @Param        filter query gormhelper.Filter false "Optional Filter"
+// @Param        filter query filter.Filter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
 // @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /product [get]
 // @Security	 Bearer
 func (h *ProductHandler) getProducts(c *fiber.Ctx) error {
-	products, err := h.productService.GetProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+	products, err := h.productService.GetProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.productService.CountProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.Filter))
+	count, err := h.productService.CountProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}

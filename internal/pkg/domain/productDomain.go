@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"github.com/raulaguila/go-template/pkg/validator"
 )
 
@@ -18,8 +18,8 @@ type (
 
 	ProductRepository interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetProducts(context.Context, *gormhelper.Filter) (*[]Product, error)
-		CountProducts(context.Context, *gormhelper.Filter) (int64, error)
+		GetProducts(context.Context, *filter.Filter) (*[]Product, error)
+		CountProducts(context.Context, *filter.Filter) (int64, error)
 		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error
@@ -27,8 +27,8 @@ type (
 
 	ProductService interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetProducts(context.Context, *gormhelper.Filter) (*[]Product, error)
-		CountProducts(context.Context, *gormhelper.Filter) (int64, error)
+		GetProducts(context.Context, *filter.Filter) (*[]Product, error)
+		CountProducts(context.Context, *filter.Filter) (int64, error)
 		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error
