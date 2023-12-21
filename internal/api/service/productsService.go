@@ -5,7 +5,7 @@ import (
 
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 )
 
 func NewProductService(r domain.ProductRepository) domain.ProductService {
@@ -24,12 +24,12 @@ func (s *productService) GetProductByID(ctx context.Context, productID uint) (*d
 }
 
 // Implementation of 'GetProducts'.
-func (s *productService) GetProducts(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
+func (s *productService) GetProducts(ctx context.Context, filter *filter.Filter) (*[]domain.Product, error) {
 	return s.productRepository.GetProducts(ctx, filter)
 }
 
 // Implementation of 'CountProducts'.
-func (s *productService) CountProducts(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+func (s *productService) CountProducts(ctx context.Context, filter *filter.Filter) (int64, error) {
 	return s.productRepository.CountProducts(ctx, filter)
 }
 

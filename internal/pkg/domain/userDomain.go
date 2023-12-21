@@ -8,7 +8,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"github.com/raulaguila/go-template/pkg/helpers"
 	"github.com/raulaguila/go-template/pkg/validator"
 	"golang.org/x/crypto/bcrypt"
@@ -31,8 +31,8 @@ type (
 
 	UserRepository interface {
 		GetUserByID(context.Context, uint) (*User, error)
-		GetUsers(context.Context, *gormhelper.UserFilter) (*[]User, error)
-		CountUsers(context.Context, *gormhelper.UserFilter) (int64, error)
+		GetUsers(context.Context, *filter.UserFilter) (*[]User, error)
+		CountUsers(context.Context, *filter.UserFilter) (int64, error)
 		GetUserByMail(context.Context, string) (*User, error)
 		GetUserByToken(context.Context, string) (*User, error)
 		CreateUser(context.Context, *dto.UserInputDTO) (uint, error)
@@ -44,8 +44,8 @@ type (
 
 	UserService interface {
 		GetUserByID(context.Context, uint) (*User, error)
-		GetUsers(context.Context, *gormhelper.UserFilter) (*[]User, error)
-		CountUsers(context.Context, *gormhelper.UserFilter) (int64, error)
+		GetUsers(context.Context, *filter.UserFilter) (*[]User, error)
+		CountUsers(context.Context, *filter.UserFilter) (int64, error)
 		GetUserByMail(context.Context, string) (*User, error)
 		GetUserByToken(context.Context, string) (*User, error)
 		CreateUser(context.Context, *dto.UserInputDTO) (uint, error)

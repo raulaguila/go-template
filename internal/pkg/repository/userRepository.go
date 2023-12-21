@@ -8,7 +8,7 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
 	"github.com/raulaguila/go-template/internal/pkg/postgre"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -23,7 +23,7 @@ type userRepository struct {
 	postgres *gorm.DB
 }
 
-func (s *userRepository) applyFilter(ctx context.Context, filter *gormhelper.UserFilter, pag bool) *gorm.DB {
+func (s *userRepository) applyFilter(ctx context.Context, filter *filter.UserFilter, pag bool) *gorm.DB {
 	postgres := s.postgres.WithContext(ctx)
 	if filter.ProfileID != 0 {
 		postgres = postgres.Where(domain.UserTableName+".profile_id = ?", filter.ProfileID)
@@ -43,12 +43,12 @@ func (s *userRepository) GetUserByID(ctx context.Context, userID uint) (*domain.
 	return user, s.postgres.WithContext(ctx).Preload(postgre.ProfilePermission).First(user, userID).Error
 }
 
-func (s *userRepository) GetUsers(ctx context.Context, filter *gormhelper.UserFilter) (*[]domain.User, error) {
+func (s *userRepository) GetUsers(ctx context.Context, filter *filter.UserFilter) (*[]domain.User, error) {
 	users := &[]domain.User{}
 	return users, s.applyFilter(ctx, filter, true).Preload(postgre.ProfilePermission).Find(users).Error
 }
 
-func (s *userRepository) CountUsers(ctx context.Context, filter *gormhelper.UserFilter) (int64, error) {
+func (s *userRepository) CountUsers(ctx context.Context, filter *filter.UserFilter) (int64, error) {
 	var count int64
 	return count, s.applyFilter(ctx, filter, false).Model(&domain.User{}).Count(&count).Error
 }

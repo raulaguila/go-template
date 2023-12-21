@@ -5,7 +5,7 @@ import (
 
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 )
 
 func NewUserService(r domain.UserRepository) domain.UserService {
@@ -19,12 +19,12 @@ type userService struct {
 }
 
 // Implementation of 'GetUsers'.
-func (s *userService) GetUsers(ctx context.Context, filter *gormhelper.UserFilter) (*[]domain.User, error) {
+func (s *userService) GetUsers(ctx context.Context, filter *filter.UserFilter) (*[]domain.User, error) {
 	return s.userRepository.GetUsers(ctx, filter)
 }
 
 // Implementation of 'CountUsers'
-func (s *userService) CountUsers(ctx context.Context, filter *gormhelper.UserFilter) (int64, error) {
+func (s *userService) CountUsers(ctx context.Context, filter *filter.UserFilter) (int64, error) {
 	return s.userRepository.CountUsers(ctx, filter)
 }
 

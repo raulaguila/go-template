@@ -5,7 +5,7 @@ import (
 
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -20,7 +20,7 @@ type profileRepository struct {
 	postgres *gorm.DB
 }
 
-func (s *profileRepository) applyFilter(ctx context.Context, filter *gormhelper.Filter, pag bool) *gorm.DB {
+func (s *profileRepository) applyFilter(ctx context.Context, filter *filter.Filter, pag bool) *gorm.DB {
 	postgres := s.postgres.WithContext(ctx)
 	postgres = filter.ApplySearchLike(postgres, "name")
 	postgres = filter.ApplyOrder(postgres)
@@ -36,12 +36,12 @@ func (s *profileRepository) GetProfileByID(ctx context.Context, profileID uint) 
 	return profile, s.postgres.WithContext(ctx).Preload(clause.Associations).First(profile, profileID).Error
 }
 
-func (s *profileRepository) GetProfiles(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Profile, error) {
+func (s *profileRepository) GetProfiles(ctx context.Context, filter *filter.Filter) (*[]domain.Profile, error) {
 	profiles := &[]domain.Profile{}
 	return profiles, s.applyFilter(ctx, filter, true).Preload(clause.Associations).Find(profiles).Error
 }
 
-func (s *profileRepository) CountProfiles(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+func (s *profileRepository) CountProfiles(ctx context.Context, filter *filter.Filter) (int64, error) {
 	var count int64
 	return count, s.applyFilter(ctx, filter, false).Model(&domain.Profile{}).Count(&count).Error
 }

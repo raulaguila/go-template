@@ -50,7 +50,11 @@ func main() {
 		},
 	})
 
-	app.Use(middleware.GetRequestLanguage)
+	app.Use(
+		recover.New(),
+		middleware.GetRequestLanguage,
+		requestid.New(),
+	)
 
 	if strings.ToLower(os.Getenv("API_LOGGER")) == "true" {
 		app.Use(logger.New(logger.Config{
@@ -69,8 +73,6 @@ func main() {
 	}
 
 	app.Use(
-		recover.New(),
-		requestid.New(),
 		cors.New(cors.Config{
 			AllowOrigins:     "*",
 			AllowMethods:     strings.Join([]string{fiber.MethodGet, fiber.MethodPost, fiber.MethodPut, fiber.MethodPatch, fiber.MethodDelete, fiber.MethodOptions}, ","),

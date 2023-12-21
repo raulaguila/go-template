@@ -5,7 +5,7 @@ import (
 
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +19,7 @@ type productRepository struct {
 	postgres *gorm.DB
 }
 
-func (s *productRepository) applyFilter(ctx context.Context, filter *gormhelper.Filter, pag bool) *gorm.DB {
+func (s *productRepository) applyFilter(ctx context.Context, filter *filter.Filter, pag bool) *gorm.DB {
 	postgres := s.postgres.WithContext(ctx)
 	postgres = filter.ApplySearchLike(postgres, "name")
 	postgres = filter.ApplyOrder(postgres)
@@ -35,12 +35,12 @@ func (s *productRepository) GetProductByID(ctx context.Context, productID uint) 
 	return product, s.postgres.WithContext(ctx).First(product, productID).Error
 }
 
-func (s *productRepository) GetProducts(ctx context.Context, filter *gormhelper.Filter) (*[]domain.Product, error) {
+func (s *productRepository) GetProducts(ctx context.Context, filter *filter.Filter) (*[]domain.Product, error) {
 	products := &[]domain.Product{}
 	return products, s.applyFilter(ctx, filter, true).Find(products).Error
 }
 
-func (s *productRepository) CountProducts(ctx context.Context, filter *gormhelper.Filter) (int64, error) {
+func (s *productRepository) CountProducts(ctx context.Context, filter *filter.Filter) (int64, error) {
 	var count int64
 	return count, s.applyFilter(ctx, filter, false).Model(&domain.Product{}).Count(&count).Error
 }

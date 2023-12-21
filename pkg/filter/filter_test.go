@@ -1,4 +1,4 @@
-package gormhelper
+package filter
 
 import (
 	"os"

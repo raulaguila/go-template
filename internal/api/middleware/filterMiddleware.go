@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 )
 
@@ -21,12 +21,12 @@ func getQuery(c *fiber.Ctx, data interface{}) error {
 }
 
 func GetGenericFilter(c *fiber.Ctx) error {
-	return getQuery(c, gormhelper.NewFilter())
+	return getQuery(c, filter.NewFilter())
 }
 
 func GetUserFilter(c *fiber.Ctx) error {
-	return getQuery(c, &gormhelper.UserFilter{
-		Filter:    *gormhelper.NewFilter(),
+	return getQuery(c, &filter.UserFilter{
+		Filter:    *filter.NewFilter(),
 		ProfileID: 0,
 	})
 }

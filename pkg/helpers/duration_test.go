@@ -16,6 +16,7 @@ func TestDurationWithEmptyString(t *testing.T) {
 
 	assert.Error(t, err, "Did not return error!")
 	assert.Equal(t, time.Duration(0), life)
+	assert.Equal(t, err, ErrIntConvert)
 }
 
 // go test -run TestDurationWithInvalidString
@@ -24,6 +25,7 @@ func TestDurationWithInvalidString(t *testing.T) {
 
 	assert.Error(t, err, "Did not return error!")
 	assert.Equal(t, time.Duration(0), life)
+	assert.Equal(t, err, ErrIntConvert)
 }
 
 // go test -run TestDurationFromString

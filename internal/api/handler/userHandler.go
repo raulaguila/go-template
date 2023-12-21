@@ -10,7 +10,8 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
-	gormhelper "github.com/raulaguila/go-template/pkg/gorm-helper"
+	"github.com/raulaguila/go-template/internal/pkg/postgre"
+	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/postgresql"
 	"github.com/raulaguila/go-template/pkg/validator"
@@ -72,7 +73,7 @@ func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
 }
 
 // Creates a new handler.
-func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.ObjectMiddleware) {
+func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.RequesttMiddleware) {
 	handler := &UserHandler{
 		userService: us,
 	}
@@ -80,13 +81,14 @@ func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.O
 	route.Patch("/:"+httphelper.ParamMail+"/passw", handler.existUserByEmail, middleware.GetDTO(&dto.PasswordInputDTO{}), handler.passwordUser)
 
 	route.Use(middleware.MidAccess)
+	userByID := mid.ItemByID(&domain.User{}, domain.UserTableName, postgre.ProfilePermission)
 
 	route.Get("", middleware.GetUserFilter, handler.getUsers)
 	route.Post("", middleware.GetDTO(&dto.UserInputDTO{}), handler.createUser)
-	route.Get("/:"+httphelper.ParamID, mid.UserByID, handler.getUser)
-	route.Put("/:"+httphelper.ParamID, mid.UserByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
-	route.Delete("/:"+httphelper.ParamID, mid.UserByID, handler.deleteUser)
-	route.Patch("/:"+httphelper.ParamID+"/reset", mid.UserByID, handler.resetUser)
+	route.Get("/:"+httphelper.ParamID, userByID, handler.getUser)
+	route.Put("/:"+httphelper.ParamID, userByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
+	route.Delete("/:"+httphelper.ParamID, userByID, handler.deleteUser)
+	route.Patch("/:"+httphelper.ParamID+"/reset", userByID, handler.resetUser)
 }
 
 // getUsers godoc
@@ -96,18 +98,18 @@ func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.O
 // @Accept       json
 // @Produce      json
 // @Param        lang query string false "Language responses"
-// @Param        filter query gormhelper.UserFilter false "Optional Filter"
+// @Param        filter query filter.UserFilter false "Optional Filter"
 // @Success      200  {array}   dto.ItemsOutputDTO
 // @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /user [get]
 // @Security	 Bearer
 func (h *UserHandler) getUsers(c *fiber.Ctx) error {
-	users, err := h.userService.GetUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.UserFilter))
+	users, err := h.userService.GetUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.UserFilter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.userService.CountUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*gormhelper.UserFilter))
+	count, err := h.userService.CountUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.UserFilter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
