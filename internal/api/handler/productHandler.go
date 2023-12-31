@@ -11,7 +11,7 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
 	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
-	"github.com/raulaguila/go-template/pkg/postgresql"
+	"github.com/raulaguila/go-template/pkg/pgerror"
 	"github.com/raulaguila/go-template/pkg/validator"
 )
 
@@ -33,12 +33,12 @@ func (ProductHandler) foreignKeyViolatedMethod(c *fiber.Ctx, translation *i18n.T
 func (s ProductHandler) handlerError(c *fiber.Ctx, err error) error {
 	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
-	switch postgresql.HandlerError(err) {
-	case postgresql.ErrDuplicatedKey:
+	switch pgerror.HandlerError(err) {
+	case pgerror.ErrDuplicatedKey:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, translation.ErrProductRegistered)
-	case postgresql.ErrForeignKeyViolated:
+	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedMethod(c, translation)
-	case postgresql.ErrUndefinedColumn:
+	case pgerror.ErrUndefinedColumn:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrUndefinedColumn)
 	}
 

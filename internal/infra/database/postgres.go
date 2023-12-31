@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/raulaguila/go-template/pkg/helpers"
-	"github.com/raulaguila/go-template/pkg/postgresql"
+	"github.com/raulaguila/go-template/pkg/pgerror"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -45,8 +45,8 @@ func createDataBase() {
 	defer con.Close()
 
 	if err := db.Exec(fmt.Sprintf("CREATE DATABASE %v;", os.Getenv("POSTGRES_BASE"))).Error; err != nil {
-		switch postgresql.HandlerError(err) {
-		case postgresql.ErrDatabaseAlreadyExists:
+		switch pgerror.HandlerError(err) {
+		case pgerror.ErrDatabaseAlreadyExists:
 		default:
 			helpers.PanicIfErr(err)
 		}

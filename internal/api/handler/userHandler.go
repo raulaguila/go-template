@@ -13,7 +13,7 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/postgre"
 	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
-	"github.com/raulaguila/go-template/pkg/postgresql"
+	"github.com/raulaguila/go-template/pkg/pgerror"
 	"github.com/raulaguila/go-template/pkg/validator"
 	"gorm.io/gorm"
 )
@@ -36,12 +36,12 @@ func (s UserHandler) foreignKeyViolatedFrom(c *fiber.Ctx, messages *i18n.Transla
 func (s UserHandler) handlerError(c *fiber.Ctx, err error) error {
 	messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
-	switch postgresql.HandlerError(err) {
-	case postgresql.ErrDuplicatedKey:
+	switch pgerror.HandlerError(err) {
+	case pgerror.ErrDuplicatedKey:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrUserRegistered)
-	case postgresql.ErrForeignKeyViolated:
+	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedFrom(c, messages)
-	case postgresql.ErrUndefinedColumn:
+	case pgerror.ErrUndefinedColumn:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
