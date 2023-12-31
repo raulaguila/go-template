@@ -19,13 +19,8 @@ type userService struct {
 }
 
 // Implementation of 'GetUsers'.
-func (s *userService) GetUsers(ctx context.Context, filter *filter.UserFilter) (*[]domain.User, error) {
-	return s.userRepository.GetUsers(ctx, filter)
-}
-
-// Implementation of 'CountUsers'
-func (s *userService) CountUsers(ctx context.Context, filter *filter.UserFilter) (int64, error) {
-	return s.userRepository.CountUsers(ctx, filter)
+func (s *userService) GetUsersOutputDTO(ctx context.Context, filter *filter.UserFilter) (*dto.ItemsOutputDTO, error) {
+	return s.userRepository.GetUsersOutputDTO(ctx, filter)
 }
 
 // Implementation of 'GetUserByID'.
@@ -44,7 +39,7 @@ func (s *userService) GetUserByToken(ctx context.Context, token string) (*domain
 }
 
 // Implementation of 'CreateUser'.
-func (s *userService) CreateUser(ctx context.Context, datas *dto.UserInputDTO) (uint, error) {
+func (s *userService) CreateUser(ctx context.Context, datas *dto.UserInputDTO) (*domain.User, error) {
 	return s.userRepository.CreateUser(ctx, datas)
 }
 

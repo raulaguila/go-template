@@ -23,18 +23,13 @@ func (s *profileService) GetProfileByID(ctx context.Context, profileID uint) (*d
 	return s.profileRepository.GetProfileByID(ctx, profileID)
 }
 
-// Implementation of 'GetProfiles'.
-func (s *profileService) GetProfiles(ctx context.Context, filter *filter.Filter) (*[]domain.Profile, error) {
-	return s.profileRepository.GetProfiles(ctx, filter)
-}
-
-// Implementation of 'CountProfiles'.
-func (s *profileService) CountProfiles(ctx context.Context, filter *filter.Filter) (int64, error) {
-	return s.profileRepository.CountProfiles(ctx, filter)
+// Implementation of 'GetProfilesOutputDTO'.
+func (s *profileService) GetProfilesOutputDTO(ctx context.Context, filter *filter.Filter) (*dto.ItemsOutputDTO, error) {
+	return s.profileRepository.GetProfilesOutputDTO(ctx, filter)
 }
 
 // Implementation of 'CreateProfile'.
-func (s *profileService) CreateProfile(ctx context.Context, datas *dto.ProfileInputDTO) (uint, error) {
+func (s *profileService) CreateProfile(ctx context.Context, datas *dto.ProfileInputDTO) (*domain.Profile, error) {
 	return s.profileRepository.CreateProfile(ctx, datas)
 }
 

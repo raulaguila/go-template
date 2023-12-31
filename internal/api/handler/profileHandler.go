@@ -80,20 +80,12 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middle
 // @Router       /profile [get]
 // @Security	 Bearer
 func (h *ProfileHandler) getProfiles(c *fiber.Ctx) error {
-	profiles, err := h.profileService.GetProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
+	response, err := h.profileService.GetProfilesOutputDTO(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.profileService.CountProfiles(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(&dto.ItemsOutputDTO{
-		Items: profiles,
-		Count: count,
-	})
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // createProfile godoc
@@ -111,12 +103,8 @@ func (h *ProfileHandler) getProfiles(c *fiber.Ctx) error {
 // @Router       /profile [post]
 // @Security	 Bearer
 func (h *ProfileHandler) createProfile(c *fiber.Ctx) error {
-	id, err := h.profileService.CreateProfile(c.Context(), c.Locals(httphelper.LocalDTO).(*dto.ProfileInputDTO))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	profile, err := h.profileService.GetProfileByID(c.Context(), id)
+	profileDTO := c.Locals(httphelper.LocalDTO).(*dto.ProfileInputDTO)
+	profile, err := h.profileService.CreateProfile(c.Context(), profileDTO)
 	if err != nil {
 		return h.handlerError(c, err)
 	}
@@ -158,8 +146,9 @@ func (h *ProfileHandler) getProfile(c *fiber.Ctx) error {
 // @Router       /profile/{id} [put]
 // @Security	 Bearer
 func (h *ProfileHandler) updateProfile(c *fiber.Ctx) error {
+	profileDTO := c.Locals(httphelper.LocalDTO).(*dto.ProfileInputDTO)
 	profile := c.Locals(httphelper.LocalObject).(*domain.Profile)
-	if err := h.profileService.UpdateProfile(c.Context(), profile, c.Locals(httphelper.LocalDTO).(*dto.ProfileInputDTO)); err != nil {
+	if err := h.profileService.UpdateProfile(c.Context(), profile, profileDTO); err != nil {
 		return h.handlerError(c, err)
 	}
 

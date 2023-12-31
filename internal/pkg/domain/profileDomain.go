@@ -27,18 +27,16 @@ type (
 
 	ProfileRepository interface {
 		GetProfileByID(context.Context, uint) (*Profile, error)
-		GetProfiles(context.Context, *filter.Filter) (*[]Profile, error)
-		CountProfiles(context.Context, *filter.Filter) (int64, error)
-		CreateProfile(context.Context, *dto.ProfileInputDTO) (uint, error)
+		GetProfilesOutputDTO(context.Context, *filter.Filter) (*dto.ItemsOutputDTO, error)
+		CreateProfile(context.Context, *dto.ProfileInputDTO) (*Profile, error)
 		UpdateProfile(context.Context, *Profile, *dto.ProfileInputDTO) error
 		DeleteProfile(context.Context, *Profile) error
 	}
 
 	ProfileService interface {
 		GetProfileByID(context.Context, uint) (*Profile, error)
-		GetProfiles(context.Context, *filter.Filter) (*[]Profile, error)
-		CountProfiles(context.Context, *filter.Filter) (int64, error)
-		CreateProfile(context.Context, *dto.ProfileInputDTO) (uint, error)
+		GetProfilesOutputDTO(context.Context, *filter.Filter) (*dto.ItemsOutputDTO, error)
+		CreateProfile(context.Context, *dto.ProfileInputDTO) (*Profile, error)
 		UpdateProfile(context.Context, *Profile, *dto.ProfileInputDTO) error
 		DeleteProfile(context.Context, *Profile) error
 	}

@@ -17,7 +17,7 @@ Content-Type: application/json
 ###
 
 # @name getAll
-GET {{host}}/product?lang={{lang}}&page=1&limit=5&order=asc&sort=name HTTP/1.1
+GET {{host}}/product?lang={{lang}}&page=1&limit=5&order=asc&sort=name&search= HTTP/1.1
 Authorization: Bearer {{accesstoken}}
 
 ###

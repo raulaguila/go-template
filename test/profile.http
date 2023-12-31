@@ -52,7 +52,7 @@ Content-Type: application/json
 {
   "name": "Profile Updated",
   "permissions": {
-    "user_module": false,
+    "user_module": true,
     "profile_module": false,
     "product_module": false
   }

@@ -18,18 +18,16 @@ type (
 
 	ProductRepository interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetProducts(context.Context, *filter.Filter) (*[]Product, error)
-		CountProducts(context.Context, *filter.Filter) (int64, error)
-		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
+		GetProductsOutputDTO(context.Context, *filter.Filter) (*dto.ItemsOutputDTO, error)
+		CreateProduct(context.Context, *dto.ProductInputDTO) (*Product, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error
 	}
 
 	ProductService interface {
 		GetProductByID(context.Context, uint) (*Product, error)
-		GetProducts(context.Context, *filter.Filter) (*[]Product, error)
-		CountProducts(context.Context, *filter.Filter) (int64, error)
-		CreateProduct(context.Context, *dto.ProductInputDTO) (uint, error)
+		GetProductsOutputDTO(context.Context, *filter.Filter) (*dto.ItemsOutputDTO, error)
+		CreateProduct(context.Context, *dto.ProductInputDTO) (*Product, error)
 		UpdateProduct(context.Context, *Product, *dto.ProductInputDTO) error
 		DeleteProduct(context.Context, *Product) error
 	}

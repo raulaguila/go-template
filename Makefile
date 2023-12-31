@@ -27,6 +27,7 @@ compose-down: ## Run docker compose down for stopping and removing containers, n
 
 .PHONY: compose-remove
 compose-remove: ## Run docker compose down for stopping and removing containers, networks, volumes
+	@echo -n "All registered data and volumes will be deleted, are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	@${COMPOSE_COMMAND} down -v --remove-orphans
 
 .PHONY: compose-exec

@@ -79,20 +79,12 @@ func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middle
 // @Router       /product [get]
 // @Security	 Bearer
 func (h *ProductHandler) getProducts(c *fiber.Ctx) error {
-	products, err := h.productService.GetProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
+	response, err := h.productService.GetProductsOutputDTO(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.productService.CountProducts(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.Filter))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(&dto.ItemsOutputDTO{
-		Items: products,
-		Count: count,
-	})
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // getProductBydID godoc
@@ -128,12 +120,8 @@ func (h *ProductHandler) getProductBydID(c *fiber.Ctx) error {
 // @Router       /product [post]
 // @Security	 Bearer
 func (h *ProductHandler) createProduct(c *fiber.Ctx) error {
-	id, err := h.productService.CreateProduct(c.Context(), c.Locals(httphelper.LocalDTO).(*dto.ProductInputDTO))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	product, err := h.productService.GetProductByID(c.Context(), id)
+	productDTO := c.Locals(httphelper.LocalDTO).(*dto.ProductInputDTO)
+	product, err := h.productService.CreateProduct(c.Context(), productDTO)
 	if err != nil {
 		return h.handlerError(c, err)
 	}
@@ -157,17 +145,13 @@ func (h *ProductHandler) createProduct(c *fiber.Ctx) error {
 // @Router       /product/{id} [put]
 // @Security	 Bearer
 func (h *ProductHandler) updateProduct(c *fiber.Ctx) error {
+	productDTO := c.Locals(httphelper.LocalDTO).(*dto.ProductInputDTO)
 	product := c.Locals(httphelper.LocalObject).(*domain.Product)
-	if err := h.productService.UpdateProduct(c.Context(), product, c.Locals(httphelper.LocalDTO).(*dto.ProductInputDTO)); err != nil {
+	if err := h.productService.UpdateProduct(c.Context(), product, productDTO); err != nil {
 		return h.handlerError(c, err)
 	}
 
-	updated, err := h.productService.GetProductByID(c.Context(), product.Id)
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(updated)
+	return c.Status(fiber.StatusOK).JSON(product)
 }
 
 // deleteProduct godoc
@@ -184,7 +168,8 @@ func (h *ProductHandler) updateProduct(c *fiber.Ctx) error {
 // @Router       /product/{id} [delete]
 // @Security	 Bearer
 func (h *ProductHandler) deleteProduct(c *fiber.Ctx) error {
-	if err := h.productService.DeleteProduct(c.Context(), c.Locals(httphelper.LocalObject).(*domain.Product)); err != nil {
+	product := c.Locals(httphelper.LocalObject).(*domain.Product)
+	if err := h.productService.DeleteProduct(c.Context(), product); err != nil {
 		return h.handlerError(c, err)
 	}
 
