@@ -23,18 +23,13 @@ func (s *productService) GetProductByID(ctx context.Context, productID uint) (*d
 	return s.productRepository.GetProductByID(ctx, productID)
 }
 
-// Implementation of 'GetProducts'.
-func (s *productService) GetProducts(ctx context.Context, filter *filter.Filter) (*[]domain.Product, error) {
-	return s.productRepository.GetProducts(ctx, filter)
-}
-
-// Implementation of 'CountProducts'.
-func (s *productService) CountProducts(ctx context.Context, filter *filter.Filter) (int64, error) {
-	return s.productRepository.CountProducts(ctx, filter)
+// Implementation of 'GetProductsOutputDTO'.
+func (s *productService) GetProductsOutputDTO(ctx context.Context, filter *filter.Filter) (*dto.ItemsOutputDTO, error) {
+	return s.productRepository.GetProductsOutputDTO(ctx, filter)
 }
 
 // Implementation of 'CreateProduct'.
-func (s *productService) CreateProduct(ctx context.Context, datas *dto.ProductInputDTO) (uint, error) {
+func (s *productService) CreateProduct(ctx context.Context, datas *dto.ProductInputDTO) (*domain.Product, error) {
 	return s.productRepository.CreateProduct(ctx, datas)
 }
 

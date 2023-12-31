@@ -31,11 +31,10 @@ type (
 
 	UserRepository interface {
 		GetUserByID(context.Context, uint) (*User, error)
-		GetUsers(context.Context, *filter.UserFilter) (*[]User, error)
-		CountUsers(context.Context, *filter.UserFilter) (int64, error)
+		GetUsersOutputDTO(context.Context, *filter.UserFilter) (*dto.ItemsOutputDTO, error)
 		GetUserByMail(context.Context, string) (*User, error)
 		GetUserByToken(context.Context, string) (*User, error)
-		CreateUser(context.Context, *dto.UserInputDTO) (uint, error)
+		CreateUser(context.Context, *dto.UserInputDTO) (*User, error)
 		UpdateUser(context.Context, *User, *dto.UserInputDTO) error
 		DeleteUser(context.Context, *User) error
 		ResetUser(context.Context, *User) error
@@ -44,11 +43,10 @@ type (
 
 	UserService interface {
 		GetUserByID(context.Context, uint) (*User, error)
-		GetUsers(context.Context, *filter.UserFilter) (*[]User, error)
-		CountUsers(context.Context, *filter.UserFilter) (int64, error)
+		GetUsersOutputDTO(context.Context, *filter.UserFilter) (*dto.ItemsOutputDTO, error)
 		GetUserByMail(context.Context, string) (*User, error)
 		GetUserByToken(context.Context, string) (*User, error)
-		CreateUser(context.Context, *dto.UserInputDTO) (uint, error)
+		CreateUser(context.Context, *dto.UserInputDTO) (*User, error)
 		UpdateUser(context.Context, *User, *dto.UserInputDTO) error
 		DeleteUser(context.Context, *User) error
 		ResetUser(context.Context, *User) error

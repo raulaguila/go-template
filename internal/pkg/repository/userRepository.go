@@ -23,7 +23,7 @@ type userRepository struct {
 	postgres *gorm.DB
 }
 
-func (s *userRepository) applyFilter(ctx context.Context, filter *filter.UserFilter, pag bool) *gorm.DB {
+func (s *userRepository) applyFilter(ctx context.Context, filter *filter.UserFilter) *gorm.DB {
 	postgres := s.postgres.WithContext(ctx)
 	if filter.ProfileID != 0 {
 		postgres = postgres.Where(domain.UserTableName+".profile_id = ?", filter.ProfileID)
@@ -31,26 +31,42 @@ func (s *userRepository) applyFilter(ctx context.Context, filter *filter.UserFil
 	postgres = postgres.Joins(fmt.Sprintf("JOIN %v ON %v.id = %v.profile_id", domain.ProfileTableName, domain.ProfileTableName, domain.UserTableName))
 	postgres = filter.ApplySearchLike(postgres, domain.UserTableName+".name", domain.UserTableName+".mail", domain.ProfileTableName+".name")
 	postgres = filter.ApplyOrder(postgres)
-	if pag {
-		postgres = filter.ApplyPagination(postgres)
-	}
 
 	return postgres
+}
+
+func (s *userRepository) countUsers(postgres *gorm.DB) (int64, error) {
+	var count int64
+	return count, postgres.Model(&domain.User{}).Count(&count).Error
+}
+
+func (s *userRepository) listUsers(postgres *gorm.DB) (*[]domain.User, error) {
+	users := &[]domain.User{}
+	return users, postgres.Preload(postgre.ProfilePermission).Find(users).Error
+}
+
+func (s *userRepository) GetUsersOutputDTO(ctx context.Context, filter *filter.UserFilter) (*dto.ItemsOutputDTO, error) {
+	postgres := s.applyFilter(ctx, filter)
+	count, err := s.countUsers(postgres)
+	if err != nil {
+		return nil, err
+	}
+
+	postgres = filter.ApplyPagination(postgres)
+	items, err := s.listUsers(postgres)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.ItemsOutputDTO{
+		Items: items,
+		Count: count,
+	}, nil
 }
 
 func (s *userRepository) GetUserByID(ctx context.Context, userID uint) (*domain.User, error) {
 	user := &domain.User{}
 	return user, s.postgres.WithContext(ctx).Preload(postgre.ProfilePermission).First(user, userID).Error
-}
-
-func (s *userRepository) GetUsers(ctx context.Context, filter *filter.UserFilter) (*[]domain.User, error) {
-	users := &[]domain.User{}
-	return users, s.applyFilter(ctx, filter, true).Preload(postgre.ProfilePermission).Find(users).Error
-}
-
-func (s *userRepository) CountUsers(ctx context.Context, filter *filter.UserFilter) (int64, error) {
-	var count int64
-	return count, s.applyFilter(ctx, filter, false).Model(&domain.User{}).Count(&count).Error
 }
 
 func (s *userRepository) GetUserByMail(ctx context.Context, mail string) (*domain.User, error) {
@@ -63,17 +79,13 @@ func (s *userRepository) GetUserByToken(ctx context.Context, token string) (*dom
 	return user, s.postgres.WithContext(ctx).Preload(postgre.ProfilePermission).Where(user).First(user).Error
 }
 
-func (s *userRepository) CreateUser(ctx context.Context, datas *dto.UserInputDTO) (uint, error) {
+func (s *userRepository) CreateUser(ctx context.Context, datas *dto.UserInputDTO) (*domain.User, error) {
 	user := &domain.User{New: true}
 	if err := user.Bind(datas); err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	if err := s.postgres.WithContext(ctx).Create(user).Error; err != nil {
-		return 0, err
-	}
-
-	return user.Id, nil
+	return user, s.postgres.WithContext(ctx).Create(user).Error
 }
 
 func (s *userRepository) UpdateUser(ctx context.Context, user *domain.User, datas *dto.UserInputDTO) error {

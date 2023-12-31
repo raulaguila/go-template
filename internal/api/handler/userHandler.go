@@ -13,7 +13,7 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/postgre"
 	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
-	"github.com/raulaguila/go-template/pkg/postgresql"
+	"github.com/raulaguila/go-template/pkg/pgerror"
 	"github.com/raulaguila/go-template/pkg/validator"
 	"gorm.io/gorm"
 )
@@ -36,12 +36,12 @@ func (s UserHandler) foreignKeyViolatedFrom(c *fiber.Ctx, messages *i18n.Transla
 func (s UserHandler) handlerError(c *fiber.Ctx, err error) error {
 	messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 
-	switch postgresql.HandlerError(err) {
-	case postgresql.ErrDuplicatedKey:
+	switch pgerror.HandlerError(err) {
+	case pgerror.ErrDuplicatedKey:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrUserRegistered)
-	case postgresql.ErrForeignKeyViolated:
+	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedFrom(c, messages)
-	case postgresql.ErrUndefinedColumn:
+	case pgerror.ErrUndefinedColumn:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
@@ -104,20 +104,12 @@ func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.R
 // @Router       /user [get]
 // @Security	 Bearer
 func (h *UserHandler) getUsers(c *fiber.Ctx) error {
-	users, err := h.userService.GetUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.UserFilter))
+	response, err := h.userService.GetUsersOutputDTO(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.UserFilter))
 	if err != nil {
 		return h.handlerError(c, err)
 	}
 
-	count, err := h.userService.CountUsers(c.Context(), c.Locals(httphelper.LocalFilter).(*filter.UserFilter))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(&dto.ItemsOutputDTO{
-		Items: users,
-		Count: count,
-	})
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // createUser godoc
@@ -135,12 +127,8 @@ func (h *UserHandler) getUsers(c *fiber.Ctx) error {
 // @Router       /user [post]
 // @Security	 Bearer
 func (h *UserHandler) createUser(c *fiber.Ctx) error {
-	id, err := h.userService.CreateUser(c.Context(), c.Locals(httphelper.LocalDTO).(*dto.UserInputDTO))
-	if err != nil {
-		return h.handlerError(c, err)
-	}
-
-	user, err := h.userService.GetUserByID(c.Context(), id)
+	userDTO := c.Locals(httphelper.LocalDTO).(*dto.UserInputDTO)
+	user, err := h.userService.CreateUser(c.Context(), userDTO)
 	if err != nil {
 		return h.handlerError(c, err)
 	}
@@ -182,8 +170,9 @@ func (h *UserHandler) getUser(c *fiber.Ctx) error {
 // @Router       /user/{id} [put]
 // @Security	 Bearer
 func (h *UserHandler) updateUser(c *fiber.Ctx) error {
+	userDTO := c.Locals(httphelper.LocalDTO).(*dto.UserInputDTO)
 	user := c.Locals(httphelper.LocalObject).(*domain.User)
-	if err := h.userService.UpdateUser(c.Context(), user, c.Locals(httphelper.LocalDTO).(*dto.UserInputDTO)); err != nil {
+	if err := h.userService.UpdateUser(c.Context(), user, userDTO); err != nil {
 		return h.handlerError(c, err)
 	}
 

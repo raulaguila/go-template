@@ -75,14 +75,13 @@ make compose-remove
 
 [Profile module](../test/profile.http):
 
-| Endpoint         | HTTP Method |      Description       |
-| :--------------- | :---------: | :--------------------: |
-| `/profile`       |    `GET`    |   `Get all profiles`   |
-| `/profile`       |   `POST`    |  `Insert new profile`  |
-| `/profile/count` |    `GET`    |    `Count profiles`    |
-| `/profile/{id}`  |    `GET`    |  `Get profile by ID`   |
-| `/profile/{id}`  |    `PUT`    | `Update profile by ID` |
-| `/profile/{id}`  |  `DELETE`   | `Delete profile by ID` |
+| Endpoint        | HTTP Method |      Description       |
+| :-------------- | :---------: | :--------------------: |
+| `/profile`      |    `GET`    |   `Get all profiles`   |
+| `/profile`      |   `POST`    |  `Insert new profile`  |
+| `/profile/{id}` |    `GET`    |  `Get profile by ID`   |
+| `/profile/{id}` |    `PUT`    | `Update profile by ID` |
+| `/profile/{id}` |  `DELETE`   | `Delete profile by ID` |
 
 [User module](../test/user.http):
 
@@ -90,7 +89,6 @@ make compose-remove
 | :-------------------- | :---------: | :---------------------: |
 | `/user`               |    `GET`    |     `Get all users`     |
 | `/user`               |   `POST`    |      `Insert user`      |
-| `/user/count`         |    `GET`    |      `Count users`      |
 | `/user/{email}/passw` |   `PATCH`   |  `Set user's password`  |
 | `/user/{id}/reset`    |   `PATCH`   | `Reset user's password` |
 | `/user/{id}`          |    `GET`    |    `Get user by ID`     |
@@ -113,14 +111,13 @@ Authorization: Bearer <token>
 
 [Product module](../test/product.http):
 
-| Endpoint         | HTTP Method |      Description       |
-| :--------------- | :---------: | :--------------------: |
-| `/product`       |    `GET`    |   `Get all products`   |
-| `/product`       |   `POST`    |  `Insert new product`  |
-| `/product/count` |    `GET`    |    `Count products`    |
-| `/product/{id}`  |    `GET`    |  `Get product by ID`   |
-| `/product/{id}`  |    `PUT`    | `Update product by ID` |
-| `/product/{id}`  |  `DELETE`   | `Delete product by ID` |
+| Endpoint        | HTTP Method |      Description       |
+| :-------------- | :---------: | :--------------------: |
+| `/product`      |    `GET`    |   `Get all products`   |
+| `/product`      |   `POST`    |  `Insert new product`  |
+| `/product/{id}` |    `GET`    |  `Get product by ID`   |
+| `/product/{id}` |    `PUT`    | `Update product by ID` |
+| `/product/{id}` |  `DELETE`   | `Delete product by ID` |
 
 ## Code status
 

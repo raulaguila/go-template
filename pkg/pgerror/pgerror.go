@@ -1,4 +1,4 @@
-package postgresql
+package pgerror
 
 import (
 	"errors"
