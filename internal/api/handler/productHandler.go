@@ -57,13 +57,12 @@ func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middle
 	}
 
 	route.Use(middleware.MidAccess)
-	productByID := mid.ItemByID(&domain.Product{}, domain.ProductTableName)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProducts)
 	route.Post("", middleware.GetDTO(&dto.ProductInputDTO{}), handler.createProduct)
-	route.Get("/:"+httphelper.ParamID, productByID, handler.getProductBydID)
-	route.Put("/:"+httphelper.ParamID, productByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
-	route.Delete("/:"+httphelper.ParamID, productByID, handler.deleteProduct)
+	route.Get("/:"+httphelper.ParamID, mid.ProductByID, handler.getProductBydID)
+	route.Put("/:"+httphelper.ParamID, mid.ProductByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
+	route.Delete("/:"+httphelper.ParamID, mid.ProductByID, handler.deleteProduct)
 }
 
 // getProducts godoc

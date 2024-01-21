@@ -10,7 +10,6 @@ import (
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/dto"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
-	"github.com/raulaguila/go-template/internal/pkg/postgre"
 	"github.com/raulaguila/go-template/pkg/filter"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/pgerror"
@@ -81,14 +80,13 @@ func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.R
 	route.Patch("/:"+httphelper.ParamMail+"/passw", handler.existUserByEmail, middleware.GetDTO(&dto.PasswordInputDTO{}), handler.passwordUser)
 
 	route.Use(middleware.MidAccess)
-	userByID := mid.ItemByID(&domain.User{}, domain.UserTableName, postgre.ProfilePermission)
 
 	route.Get("", middleware.GetUserFilter, handler.getUsers)
 	route.Post("", middleware.GetDTO(&dto.UserInputDTO{}), handler.createUser)
-	route.Get("/:"+httphelper.ParamID, userByID, handler.getUser)
-	route.Put("/:"+httphelper.ParamID, userByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
-	route.Delete("/:"+httphelper.ParamID, userByID, handler.deleteUser)
-	route.Patch("/:"+httphelper.ParamID+"/reset", userByID, handler.resetUser)
+	route.Get("/:"+httphelper.ParamID, mid.UserByID, handler.getUser)
+	route.Put("/:"+httphelper.ParamID, mid.UserByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
+	route.Delete("/:"+httphelper.ParamID, mid.UserByID, handler.deleteUser)
+	route.Patch("/:"+httphelper.ParamID+"/reset", mid.UserByID, handler.resetUser)
 }
 
 // getUsers godoc
