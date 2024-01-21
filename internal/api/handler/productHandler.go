@@ -22,11 +22,11 @@ type ProductHandler struct {
 func (ProductHandler) foreignKeyViolatedMethod(c *fiber.Ctx, translation *i18n.Translation) error {
 	switch c.Method() {
 	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProductNotFound)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProductNotFound)
 	case fiber.MethodDelete:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProductUsed)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProductUsed)
 	default:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+		return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 	}
 }
 
@@ -35,19 +35,19 @@ func (s ProductHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch pgerror.HandlerError(err) {
 	case pgerror.ErrDuplicatedKey:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, translation.ErrProductRegistered)
+		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, translation.ErrProductRegistered)
 	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedMethod(c, translation)
 	case pgerror.ErrUndefinedColumn:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrUndefinedColumn)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 }
 
 // Creates a new handler.
@@ -59,9 +59,9 @@ func NewProductHandler(route fiber.Router, ps domain.ProductService, mid *middle
 	route.Use(middleware.MidAccess)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProducts)
-	route.Post("", middleware.GetDTO(&dto.ProductInputDTO{}), handler.createProduct)
+	route.Post("", middleware.GetProductDTO, handler.createProduct)
 	route.Get("/:"+httphelper.ParamID, mid.ProductByID, handler.getProductBydID)
-	route.Put("/:"+httphelper.ParamID, mid.ProductByID, middleware.GetDTO(&dto.ProductInputDTO{}), handler.updateProduct)
+	route.Put("/:"+httphelper.ParamID, mid.ProductByID, middleware.GetProductDTO, handler.updateProduct)
 	route.Delete("/:"+httphelper.ParamID, mid.ProductByID, handler.deleteProduct)
 }
 

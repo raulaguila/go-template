@@ -52,7 +52,7 @@ Content-Type: application/json
   "email": "user@updated.com",
   "name": "User Updated",
   "profile_id": 1,
-  "status": false
+  "status": true
 }
 
 ###

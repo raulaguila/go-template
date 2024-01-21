@@ -24,11 +24,11 @@ type UserHandler struct {
 func (s UserHandler) foreignKeyViolatedFrom(c *fiber.Ctx, messages *i18n.Translation) error {
 	switch c.Method() {
 	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrProfileNotFound)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrProfileNotFound)
 	case fiber.MethodDelete:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUserUsed)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUserUsed)
 	default:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+		return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 	}
 }
 
@@ -37,19 +37,19 @@ func (s UserHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch pgerror.HandlerError(err) {
 	case pgerror.ErrDuplicatedKey:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrUserRegistered)
+		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, messages.ErrUserRegistered)
 	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedFrom(c, messages)
 	case pgerror.ErrUndefinedColumn:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
@@ -60,10 +60,10 @@ func (h *UserHandler) existUserByEmail(c *fiber.Ctx) error {
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, translation.ErrUserNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrUserNotFound)
 		default:
 			log.Println(err.Error())
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 		}
 	}
 
@@ -77,14 +77,14 @@ func NewUserHandler(route fiber.Router, us domain.UserService, mid *middleware.R
 		userService: us,
 	}
 
-	route.Patch("/:"+httphelper.ParamMail+"/passw", handler.existUserByEmail, middleware.GetDTO(&dto.PasswordInputDTO{}), handler.passwordUser)
+	route.Patch("/:"+httphelper.ParamMail+"/passw", handler.existUserByEmail, middleware.GetPasswordInputDTO, handler.passwordUser)
 
 	route.Use(middleware.MidAccess)
 
 	route.Get("", middleware.GetUserFilter, handler.getUsers)
-	route.Post("", middleware.GetDTO(&dto.UserInputDTO{}), handler.createUser)
+	route.Post("", middleware.GetUserDTO, handler.createUser)
 	route.Get("/:"+httphelper.ParamID, mid.UserByID, handler.getUser)
-	route.Put("/:"+httphelper.ParamID, mid.UserByID, middleware.GetDTO(&dto.UserInputDTO{}), handler.updateUser)
+	route.Put("/:"+httphelper.ParamID, mid.UserByID, middleware.GetUserDTO, handler.updateUser)
 	route.Delete("/:"+httphelper.ParamID, mid.UserByID, handler.deleteUser)
 	route.Patch("/:"+httphelper.ParamID+"/reset", mid.UserByID, handler.resetUser)
 }
@@ -250,13 +250,13 @@ func (h *UserHandler) passwordUser(c *fiber.Ctx) error {
 	pass := c.Locals(httphelper.LocalDTO).(*dto.PasswordInputDTO)
 	if !pass.IsValid() {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrPassUnmatch)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrPassUnmatch)
 	}
 
 	user := c.Locals(httphelper.LocalObject).(*domain.User)
 	if !user.New {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUserHasPass)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUserHasPass)
 	}
 
 	if err := h.userService.PasswordUser(c.Context(), user, pass); err != nil {

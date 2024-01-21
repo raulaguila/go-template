@@ -14,7 +14,7 @@ done
 echo "TZ='America/Manaus'                             # Set system time zone
 SYS_LANGUAGE='en'                               # Default system language
 SYS_LANGUAGES='en,pt'                            # System languages
-SYS_VERSION='0.0.4'                             # System version
+SYS_VERSION='0.0.5'                             # System version
 SYS_PREFORK='true'                              # Enable Fiber Prefork
 
 API_HOST='70.20.1.2'                            # API Container HOST
@@ -39,7 +39,7 @@ POSTGRES_INT_PORT='5432'                        # Postgres Container internal PO
 POSTGRES_EXT_PORT='5432'                        # Postgres Container external PORT
 POSTGRES_USER='admin'                           # Postgres USER
 POSTGRES_PASS='pgpassw'                         # Postgres PASS
-POSTGRES_BASE='gotemplate'                       # Postgres BASE
+POSTGRES_BASE='gotemplate'                      # Postgres BASE
 
 ADM_NAME='Administrator'                        # User Default Name
 ADM_MAIL='admin@admin.com'                      # User Default Email

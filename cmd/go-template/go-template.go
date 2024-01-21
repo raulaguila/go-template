@@ -46,7 +46,7 @@ func main() {
 		AppName:               "Go - Expense API",
 		ReduceMemoryUsage:     false,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, err)
+			return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, err)
 		},
 	})
 
@@ -86,7 +86,7 @@ func main() {
 			Expiration: time.Minute,
 			LimitReached: func(c *fiber.Ctx) error {
 				messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-				return httphelper.NewHTTPErrorResponse(c, fiber.StatusTooManyRequests, messages.ErrManyRequest)
+				return httphelper.NewHTTPResponse(c, fiber.StatusTooManyRequests, messages.ErrManyRequest)
 			},
 		}),
 	)

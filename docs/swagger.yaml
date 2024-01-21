@@ -40,6 +40,13 @@ definitions:
     required:
     - name
     type: object
+  domain.TokensResponse:
+    properties:
+      accesstoken:
+        type: string
+      refreshtoken:
+        type: string
+    type: object
   domain.User:
     properties:
       id:
@@ -175,9 +182,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.User'
-            type: array
+            $ref: '#/definitions/domain.User'
         "401":
           description: Unauthorized
           schema:
@@ -212,9 +217,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.AuthResponse'
-            type: array
+            $ref: '#/definitions/domain.AuthResponse'
         "401":
           description: Unauthorized
           schema:
@@ -245,9 +248,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.AuthResponse'
-            type: array
+            $ref: '#/definitions/domain.TokensResponse'
         "401":
           description: Unauthorized
           schema:

@@ -22,11 +22,11 @@ type ProfileHandler struct {
 func (ProfileHandler) foreignKeyViolatedMethod(c *fiber.Ctx, translation *i18n.Translation) error {
 	switch c.Method() {
 	case fiber.MethodPut, fiber.MethodPost, fiber.MethodPatch:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProfileNotFound)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProfileNotFound)
 	case fiber.MethodDelete:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrProfileUsed)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrProfileUsed)
 	default:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+		return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 	}
 }
 
@@ -35,19 +35,19 @@ func (s ProfileHandler) handlerError(c *fiber.Ctx, err error) error {
 
 	switch pgerror.HandlerError(err) {
 	case pgerror.ErrDuplicatedKey:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
+		return httphelper.NewHTTPResponse(c, fiber.StatusConflict, messages.ErrProfileRegistered)
 	case pgerror.ErrForeignKeyViolated:
 		return s.foreignKeyViolatedMethod(c, messages)
 	case pgerror.ErrUndefinedColumn:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, messages.ErrUndefinedColumn)
 	}
 
 	if errors.As(err, &validator.ErrValidator) {
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, err)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, err)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, messages.ErrGeneric)
 }
 
 // Creates a new handler.
@@ -59,9 +59,9 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middle
 	route.Use(middleware.MidAccess)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProfiles)
-	route.Post("", middleware.GetDTO(&dto.ProfileInputDTO{}), handler.createProfile)
+	route.Post("", middleware.GetProfileDTO, handler.createProfile)
 	route.Get("/:"+httphelper.ParamID, mid.ProfileByID, handler.getProfile)
-	route.Put("/:"+httphelper.ParamID, mid.ProfileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
+	route.Put("/:"+httphelper.ParamID, mid.ProfileByID, middleware.GetProfileDTO, handler.updateProfile)
 	route.Delete("/:"+httphelper.ParamID, mid.ProfileByID, handler.deleteProfile)
 }
 

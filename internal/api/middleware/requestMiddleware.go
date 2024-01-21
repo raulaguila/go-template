@@ -28,11 +28,11 @@ var ErrInvalidID error = errors.New("invalid id")
 func (RequesttMiddleware) handlerError(c *fiber.Ctx, err error, translation *i18n.Translation) error {
 	switch err {
 	case ErrInvalidID:
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
+		return httphelper.NewHTTPResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
 	}
 
 	log.Println(err.Error())
-	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
+	return httphelper.NewHTTPResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 }
 
 func (s RequesttMiddleware) handlerDBError(c *fiber.Ctx, err error, item string) error {
@@ -42,11 +42,11 @@ func (s RequesttMiddleware) handlerDBError(c *fiber.Ctx, err error, item string)
 	case gorm.ErrRecordNotFound:
 		switch item {
 		case domain.UserTableName:
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, translation.ErrUserNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrUserNotFound)
 		case domain.ProfileTableName:
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, translation.ErrProfileNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrProfileNotFound)
 		case domain.ProductTableName:
-			return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, translation.ErrProductNotFound)
+			return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, translation.ErrProductNotFound)
 		}
 	}
 

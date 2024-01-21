@@ -65,7 +65,7 @@ func initHandelrs(app *fiber.App, postgresdb *gorm.DB) {
 	// Prepare an endpoint for 'Not Found'.
 	app.All("*", func(c *fiber.Ctx) error {
 		messages := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
+		return httphelper.NewHTTPResponse(c, fiber.StatusNotFound, messages.ErrorNonexistentRoute)
 	})
 }
 

@@ -78,10 +78,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.User"
-                            }
+                            "$ref": "#/definitions/domain.User"
                         }
                     },
                     "401": {
@@ -128,10 +125,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.AuthResponse"
-                            }
+                            "$ref": "#/definitions/domain.TokensResponse"
                         }
                     },
                     "401": {
@@ -181,10 +175,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.AuthResponse"
-                            }
+                            "$ref": "#/definitions/domain.AuthResponse"
                         }
                     },
                     "401": {
@@ -1327,6 +1318,17 @@ const docTemplate = `{
                 },
                 "permissions": {
                     "$ref": "#/definitions/domain.Permissions"
+                }
+            }
+        },
+        "domain.TokensResponse": {
+            "type": "object",
+            "properties": {
+                "accesstoken": {
+                    "type": "string"
+                },
+                "refreshtoken": {
+                    "type": "string"
                 }
             }
         },

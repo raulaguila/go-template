@@ -32,9 +32,11 @@ func (s *authRepository) Login(ctx context.Context, user *domain.User) (*domain.
 	}
 
 	return &domain.AuthResponse{
-		User:         user,
-		AccessToken:  access_token,
-		RefreshToken: refresh_token,
+		User: user,
+		TokensResponse: domain.TokensResponse{
+			AccessToken:  access_token,
+			RefreshToken: refresh_token,
+		},
 	}, nil
 }
 
@@ -81,8 +83,21 @@ func (s *authRepository) Me(ctx context.Context, userToken, base64Key string) (*
 	return s.claims2user(ctx, parsedToken)
 }
 
-func (s *authRepository) Refresh(ctx context.Context, user *domain.User) (*domain.AuthResponse, error) {
-	return s.Login(ctx, user)
+func (s *authRepository) Refresh(ctx context.Context, user *domain.User) (*domain.TokensResponse, error) {
+	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"))
+	if err != nil {
+		return nil, err
+	}
+
+	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"))
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.TokensResponse{
+		AccessToken:  access_token,
+		RefreshToken: refresh_token,
+	}, nil
 }
 
 func (s *authRepository) GetUserByMail(ctx context.Context, userMail string) (*domain.User, error) {
