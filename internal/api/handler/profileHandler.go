@@ -13,7 +13,6 @@ import (
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"github.com/raulaguila/go-template/pkg/pgerror"
 	"github.com/raulaguila/go-template/pkg/validator"
-	"gorm.io/gorm/clause"
 )
 
 type ProfileHandler struct {
@@ -58,13 +57,12 @@ func NewProfileHandler(route fiber.Router, ps domain.ProfileService, mid *middle
 	}
 
 	route.Use(middleware.MidAccess)
-	profileByID := mid.ItemByID(&domain.Profile{}, domain.ProfileTableName, clause.Associations)
 
 	route.Get("", middleware.GetGenericFilter, handler.getProfiles)
 	route.Post("", middleware.GetDTO(&dto.ProfileInputDTO{}), handler.createProfile)
-	route.Get("/:"+httphelper.ParamID, profileByID, handler.getProfile)
-	route.Put("/:"+httphelper.ParamID, profileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
-	route.Delete("/:"+httphelper.ParamID, profileByID, handler.deleteProfile)
+	route.Get("/:"+httphelper.ParamID, mid.ProfileByID, handler.getProfile)
+	route.Put("/:"+httphelper.ParamID, mid.ProfileByID, middleware.GetDTO(&dto.ProfileInputDTO{}), handler.updateProfile)
+	route.Delete("/:"+httphelper.ParamID, mid.ProfileByID, handler.deleteProfile)
 }
 
 // getProfiles godoc

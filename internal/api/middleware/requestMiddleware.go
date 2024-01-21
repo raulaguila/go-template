@@ -3,13 +3,14 @@ package middleware
 import (
 	"errors"
 	"log"
-	"reflect"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/raulaguila/go-template/internal/pkg/domain"
 	"github.com/raulaguila/go-template/internal/pkg/i18n"
+	"github.com/raulaguila/go-template/internal/pkg/postgre"
 	httphelper "github.com/raulaguila/go-template/pkg/http-helper"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func NewRequesttMiddleware(postgres *gorm.DB) *RequesttMiddleware {
@@ -24,16 +25,14 @@ type RequesttMiddleware struct {
 
 var ErrInvalidID error = errors.New("invalid id")
 
-func (RequesttMiddleware) handlerError(c *fiber.Ctx, err error) error {
-	translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
-
+func (RequesttMiddleware) handlerError(c *fiber.Ctx, err error, translation *i18n.Translation) error {
 	switch err {
 	case ErrInvalidID:
 		return httphelper.NewHTTPErrorResponse(c, fiber.StatusBadRequest, translation.ErrInvalidId)
-	default:
-		log.Println(err.Error())
-		return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 	}
+
+	log.Println(err.Error())
+	return httphelper.NewHTTPErrorResponse(c, fiber.StatusInternalServerError, translation.ErrGeneric)
 }
 
 func (s RequesttMiddleware) handlerDBError(c *fiber.Ctx, err error, item string) error {
@@ -51,34 +50,37 @@ func (s RequesttMiddleware) handlerDBError(c *fiber.Ctx, err error, item string)
 		}
 	}
 
-	return s.handlerError(c, err)
+	return s.handlerError(c, err, translation)
 }
 
-func (RequesttMiddleware) getID(c *fiber.Ctx) (uint, bool) {
-	targetedID, err := c.ParamsInt(httphelper.ParamID, 0)
-	return uint(targetedID), (err != nil || targetedID <= 0)
-}
-
-func (s *RequesttMiddleware) ItemByID(item interface{}, itemType string, preload ...string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		valuesData := reflect.ValueOf(item).Elem()
-		valuesData.Set(reflect.Zero(valuesData.Type()))
-
-		id, err := s.getID(c)
-		if err {
-			return s.handlerError(c, ErrInvalidID)
-		}
-
-		db := s.postgres.WithContext(c.Context())
-		for _, item := range preload {
-			db = db.Preload(item)
-		}
-
-		if err := db.First(item, id).Error; err != nil {
-			return s.handlerDBError(c, err, itemType)
-		}
-
-		c.Locals(httphelper.LocalObject, item)
-		return c.Next()
+func (s *RequesttMiddleware) itemByID(c *fiber.Ctx, item interface{}, itemType string, preload ...string) error {
+	id, err := c.ParamsInt(httphelper.ParamID, 0)
+	if err != nil || id < 1 {
+		translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
+		return s.handlerError(c, ErrInvalidID, translation)
 	}
+
+	postgres := s.postgres.WithContext(c.Context())
+	for _, pre := range preload {
+		postgres = postgres.Preload(pre)
+	}
+
+	if err := postgres.First(item, id).Error; err != nil {
+		return s.handlerDBError(c, err, itemType)
+	}
+
+	c.Locals(httphelper.LocalObject, item)
+	return c.Next()
+}
+
+func (s *RequesttMiddleware) ProfileByID(c *fiber.Ctx) error {
+	return s.itemByID(c, &domain.Profile{}, domain.ProfileTableName, clause.Associations)
+}
+
+func (s *RequesttMiddleware) UserByID(c *fiber.Ctx) error {
+	return s.itemByID(c, &domain.User{}, domain.UserTableName, postgre.ProfilePermission)
+}
+
+func (s *RequesttMiddleware) ProductByID(c *fiber.Ctx) error {
+	return s.itemByID(c, &domain.Product{}, domain.ProductTableName)
 }

@@ -32,11 +32,7 @@ func loadMessages() error {
 			return err
 		}
 
-		translation := &myi18n.Translation{}
-		translation.SetLanguage(lang)
-		translation.SetTranslations(i18n.NewLocalizer(bundle, lang))
-
-		myi18n.I18nTranslations[lang] = translation
+		myi18n.I18nTranslations[lang] = myi18n.NewTranslation(i18n.NewLocalizer(bundle, lang))
 	}
 
 	return nil

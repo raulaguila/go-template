@@ -8,9 +8,13 @@ import (
 
 var I18nTranslations map[string]*Translation = map[string]*Translation{}
 
-type Translation struct {
-	language string
+func NewTranslation(localizer *i18n.Localizer) *Translation {
+	translation := &Translation{}
+	translation.loadTranslations(localizer)
+	return translation
+}
 
+type Translation struct {
 	ErrGeneric            error
 	ErrInvalidId          error
 	ErrInvalidDatas       error
@@ -36,11 +40,7 @@ type Translation struct {
 	ErrUserRegistered error
 }
 
-func (s *Translation) SetLanguage(lang string) {
-	s.language = lang
-}
-
-func (s *Translation) SetTranslations(localizer *i18n.Localizer) {
+func (s *Translation) loadTranslations(localizer *i18n.Localizer) {
 	s.ErrGeneric = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrGeneric"}, PluralCount: 1}))
 	s.ErrInvalidId = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrInvalidId"}, PluralCount: 1}))
 	s.ErrInvalidDatas = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrInvalidDatas"}, PluralCount: 1}))
