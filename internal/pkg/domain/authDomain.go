@@ -7,27 +7,31 @@ import (
 )
 
 type (
-	AuthResponse struct {
-		User         *User  `json:"user"`
+	TokensResponse struct {
 		AccessToken  string `json:"accesstoken" validate:"jwt"`
 		RefreshToken string `json:"refreshtoken" validate:"jwt"`
+	}
+
+	AuthResponse struct {
+		User *User `json:"user"`
+		TokensResponse
 	}
 
 	AuthRepository interface {
 		Login(context.Context, *User) (*AuthResponse, error)
 		Me(context.Context, string, string) (*User, error)
-		Refresh(context.Context, *User) (*AuthResponse, error)
+		Refresh(context.Context, *User) (*TokensResponse, error)
 		GetUserByMail(context.Context, string) (*User, error)
 	}
 
 	AuthService interface {
 		Login(context.Context, *User) (*AuthResponse, error)
 		Me(context.Context, string, string) (*User, error)
-		Refresh(context.Context, *User) (*AuthResponse, error)
+		Refresh(context.Context, *User) (*TokensResponse, error)
 		GetUserByMail(context.Context, string) (*User, error)
 	}
 )
 
-func (s *AuthResponse) Validate() error {
+func (s *TokensResponse) Validate() error {
 	return validator.StructValidator.Validate(s)
 }

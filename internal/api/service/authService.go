@@ -24,7 +24,7 @@ func (s *authService) Me(ctx context.Context, userToken, base64Key string) (*dom
 	return s.authRepository.Me(ctx, userToken, base64Key)
 }
 
-func (s *authService) Refresh(ctx context.Context, user *domain.User) (*domain.AuthResponse, error) {
+func (s *authService) Refresh(ctx context.Context, user *domain.User) (*domain.TokensResponse, error) {
 	return s.authRepository.Refresh(ctx, user)
 }
 
