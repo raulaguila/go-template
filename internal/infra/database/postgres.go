@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/raulaguila/go-template/pkg/helpers"
@@ -14,17 +13,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func genSTRConnectionPostgres(dbName string) string {
-	switch strings.ToLower(os.Getenv("POSTGRES_USE")) {
-	case "int":
-		return fmt.Sprintf("host=%s user=%s password=%s dbname=%v port=%s sslmode=disable TimeZone=%v", os.Getenv("POSTGRES_INT_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASS"), dbName, os.Getenv("POSTGRES_INT_PORT"), time.Local.String())
-	default:
-		return fmt.Sprintf("host=%s user=%s password=%s dbname=%v port=%s sslmode=disable TimeZone=%v", os.Getenv("POSTGRES_EXT_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASS"), dbName, os.Getenv("POSTGRES_EXT_PORT"), time.Local.String())
-	}
-}
-
 func pgConnect(dbName string) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(genSTRConnectionPostgres(dbName)), &gorm.Config{
+	uri := fmt.Sprintf("host=%s user=%s password=%s dbname=%v port=%s sslmode=disable TimeZone=%v", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASS"), dbName, os.Getenv("POSTGRES_PORT"), time.Local.String())
+	db, err := gorm.Open(postgres.Open(uri), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 		NowFunc: func() time.Time {
 			return time.Now()

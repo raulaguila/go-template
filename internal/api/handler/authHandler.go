@@ -77,7 +77,7 @@ func NewAuthHandler(route fiber.Router, as domain.AuthService) {
 // @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /auth [post]
 func (s *AuthHandler) login(c *fiber.Ctx) error {
-	authResponse, err := s.authService.Login(c.Context(), c.Locals(httphelper.LocalObject).(*domain.User))
+	authResponse, err := s.authService.Login(c.Context(), c.Locals(httphelper.LocalObject).(*domain.User), c.IP())
 	if err != nil {
 		return s.handlerError(c, err)
 	}
@@ -119,7 +119,7 @@ func (s *AuthHandler) me(c *fiber.Ctx) error {
 // @Failure      500  {object}  httphelper.HTTPResponse
 // @Router       /auth [put]
 func (s *AuthHandler) refresh(c *fiber.Ctx) error {
-	tokensResponse, err := s.authService.Refresh(c.Context(), c.Locals(httphelper.LocalUser).(*domain.User))
+	tokensResponse, err := s.authService.Refresh(c.Context(), c.Locals(httphelper.LocalUser).(*domain.User), c.IP())
 	if err != nil {
 		return s.handlerError(c, err)
 	}

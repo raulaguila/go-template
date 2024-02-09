@@ -20,13 +20,13 @@ type authRepository struct {
 	userRepository domain.UserRepository
 }
 
-func (s *authRepository) Login(ctx context.Context, user *domain.User) (*domain.AuthResponse, error) {
-	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"))
+func (s *authRepository) Login(ctx context.Context, user *domain.User, ip string) (*domain.AuthResponse, error) {
+	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
 
-	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"))
+	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (s *authRepository) Login(ctx context.Context, user *domain.User) (*domain.
 	}, nil
 }
 
-func (s *authRepository) claims2user(ctx context.Context, parsedToken *jwt.Token) (*domain.User, error) {
+func (s *authRepository) claims2user(ctx context.Context, parsedToken *jwt.Token, ip string) (*domain.User, error) {
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok || !parsedToken.Valid {
 		return nil, errors.New("invalid token")
@@ -50,6 +50,9 @@ func (s *authRepository) claims2user(ctx context.Context, parsedToken *jwt.Token
 	if err != nil {
 		return nil, err
 	}
+	if val, ok := claims["ip"]; !ok || val.(string) != ip {
+		return nil, domain.ErrInvalidIpAssociation
+	}
 
 	if !usr.Status {
 		return nil, errors.New("disabled user")
@@ -58,7 +61,7 @@ func (s *authRepository) claims2user(ctx context.Context, parsedToken *jwt.Token
 	return usr, nil
 }
 
-func (s *authRepository) Me(ctx context.Context, userToken, base64Key string) (*domain.User, error) {
+func (s *authRepository) Me(ctx context.Context, userToken, base64Key, ip string) (*domain.User, error) {
 	decodedKey, err := base64.StdEncoding.DecodeString(base64Key)
 	if err != nil {
 		return nil, err
@@ -80,16 +83,16 @@ func (s *authRepository) Me(ctx context.Context, userToken, base64Key string) (*
 		return nil, err
 	}
 
-	return s.claims2user(ctx, parsedToken)
+	return s.claims2user(ctx, parsedToken, ip)
 }
 
-func (s *authRepository) Refresh(ctx context.Context, user *domain.User) (*domain.TokensResponse, error) {
-	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"))
+func (s *authRepository) Refresh(ctx context.Context, user *domain.User, ip string) (*domain.TokensResponse, error) {
+	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
 
-	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"))
+	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}

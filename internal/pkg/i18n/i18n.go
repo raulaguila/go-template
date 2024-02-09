@@ -15,17 +15,18 @@ func NewTranslation(localizer *i18n.Localizer) *Translation {
 }
 
 type Translation struct {
-	ErrGeneric            error
-	ErrInvalidId          error
-	ErrInvalidDatas       error
-	ErrManyRequest        error
-	ErrorNonexistentRoute error
-	ErrUndefinedColumn    error
-	ErrExpiredToken       error
-	ErrDisabledUser       error
-	ErrIncorrectPassword  error
-	ErrPassUnmatch        error
-	ErrUserHasPass        error
+	ErrGeneric              error
+	ErrInvalidId            error
+	ErrInvalidDatas         error
+	ErrManyRequest          error
+	ErrorNonexistentRoute   error
+	ErrUndefinedColumn      error
+	ErrExpiredToken         error
+	ErrDisabledUser         error
+	ErrIncorrectPassword    error
+	ErrPassUnmatch          error
+	ErrUserHasPass          error
+	ErrInvalidIpAssociation error
 
 	ErrProductUsed       error
 	ErrProductNotFound   error
@@ -52,6 +53,7 @@ func (s *Translation) loadTranslations(localizer *i18n.Localizer) {
 	s.ErrIncorrectPassword = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrIncorrectPassword"}, PluralCount: 1}))
 	s.ErrPassUnmatch = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrPassUnmatch"}, PluralCount: 1}))
 	s.ErrUserHasPass = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrUserHasPass"}, PluralCount: 1}))
+	s.ErrInvalidIpAssociation = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrInvalidIpAssociation"}, PluralCount: 1}))
 
 	s.ErrProductUsed = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrProductUsed"}, PluralCount: 1}))
 	s.ErrProductNotFound = errors.New(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ErrProductNotFound"}, PluralCount: 1}))
