@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 )
 
 type MiscHandler struct{}
@@ -12,6 +13,11 @@ func NewMiscHandler(miscRoute fiber.Router) {
 	handler := &MiscHandler{}
 
 	miscRoute.Get("", handler.healthCheck).Name("Root")
+	miscRoute.Get("/monitor", monitor.New(monitor.Config{
+		Title:   "Server Monitor",
+		Refresh: 5 * time.Second,
+		APIOnly: false,
+	}))
 }
 
 // healthCheck godoc

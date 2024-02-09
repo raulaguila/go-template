@@ -30,11 +30,16 @@ func Auth(base64key string, ar domain.AuthService) fiber.Handler {
 			return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, err)
 		},
 		Validator: func(c *fiber.Ctx, key string) (bool, error) {
-			user, err := ar.Me(c.Context(), key, base64key)
+			user, err := ar.Me(c.Context(), key, base64key, c.IP())
 			if err != nil || !user.Status {
 				translation := c.Locals(httphelper.LocalLang).(*i18n.Translation)
 				if err != nil {
-					return false, translation.ErrExpiredToken
+					switch err {
+					case domain.ErrInvalidIpAssociation:
+						return false, translation.ErrInvalidIpAssociation
+					default:
+						return false, translation.ErrExpiredToken
+					}
 				}
 				return false, translation.ErrDisabledUser
 			}

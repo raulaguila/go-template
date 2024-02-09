@@ -22,6 +22,10 @@ other = "Invalid data, please specify valid data."
 one = "Invalid ID, please specify a valid ID."
 other = "Invalid ID, please specify a valid ID."
 
+[ErrInvalidIpAssociation]
+one = "Invalid token ip."
+other = "Invalid token ip."
+
 [ErrManyRequest]
 one = "You have completed many requests in a short period of time! Please wait a minute!"
 other = "You have completed many requests in a short period of time! Please wait a minute!"

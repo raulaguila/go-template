@@ -28,6 +28,11 @@ hash = "sha1-89fb55dd5eefd1dfc0adacc69ef259fb86909cab"
 one = "ID inválido, especifique um ID válido."
 other = "ID inválido, especifique um ID válido."
 
+[ErrInvalidIpAssociation]
+hash = "sha1-c2b908e9792a2bee4f64a69c12a9f9bcc42d0592"
+one = "IP do token inválido."
+other = "IP do token inválido."
+
 [ErrManyRequest]
 hash = "sha1-f7ff8b8f8b7ea58a73ce86ed0c217ac9a392c903"
 one = "Você completou muitas solicitações em um curto período de tempo! Por favor, espere um minuto!"
