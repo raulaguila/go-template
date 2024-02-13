@@ -12,10 +12,6 @@ networks:
   go_template_network:
     name: go_template_network
     driver: bridge
-    ipam:
-      config:
-        - subnet: 70.20.1.0/24
-          gateway: 70.20.1.1
 
 services:
 
