@@ -77,6 +77,9 @@ definitions:
       email:
         example: admin@admin.com
         type: string
+      expire:
+        example: false
+        type: boolean
       password:
         example: "12345678"
         type: string

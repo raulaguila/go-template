@@ -1376,6 +1376,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "admin@admin.com"
                 },
+                "expire": {
+                    "type": "boolean",
+                    "example": false
+                },
                 "password": {
                     "type": "string",
                     "example": "12345678"

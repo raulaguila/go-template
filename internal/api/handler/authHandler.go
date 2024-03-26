@@ -49,6 +49,7 @@ func (s *AuthHandler) checkCredentials(c *fiber.Ctx) error {
 		return httphelper.NewHTTPResponse(c, fiber.StatusUnauthorized, translation.ErrDisabledUser)
 	}
 
+	user.Expire = credentials.Expire
 	c.Locals(httphelper.LocalObject, user)
 	return c.Next()
 }

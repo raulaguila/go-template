@@ -21,12 +21,18 @@ type authRepository struct {
 }
 
 func (s *authRepository) Login(ctx context.Context, user *domain.User, ip string) (*domain.AuthResponse, error) {
-	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
+	accessTime, refreshTime := "-", "-"
+	if user.Expire {
+		accessTime = os.Getenv("ACCESS_TOKEN_EXPIRE")
+		refreshTime = os.Getenv("RFRESH_TOKEN_EXPIRE")
+	}
+
+	accessToken, err := user.GenerateToken(accessTime, os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
 
-	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
+	refreshToken, err := user.GenerateToken(refreshTime, os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +40,8 @@ func (s *authRepository) Login(ctx context.Context, user *domain.User, ip string
 	return &domain.AuthResponse{
 		User: user,
 		TokensResponse: domain.TokensResponse{
-			AccessToken:  access_token,
-			RefreshToken: refresh_token,
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
 		},
 	}, nil
 }
@@ -52,6 +58,9 @@ func (s *authRepository) claims2user(ctx context.Context, parsedToken *jwt.Token
 	}
 	if val, ok := claims["ip"]; !ok || val.(string) != ip {
 		return nil, domain.ErrInvalidIpAssociation
+	}
+	if val, ok := claims["expire"]; ok {
+		usr.Expire = val.(bool)
 	}
 
 	if !usr.Status {
@@ -87,19 +96,25 @@ func (s *authRepository) Me(ctx context.Context, userToken, base64Key, ip string
 }
 
 func (s *authRepository) Refresh(ctx context.Context, user *domain.User, ip string) (*domain.TokensResponse, error) {
-	access_token, err := user.GenerateToken(os.Getenv("ACCESS_TOKEN_EXPIRE"), os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
+	accessTime, refreshTime := "-", "-"
+	if user.Expire {
+		accessTime = os.Getenv("ACCESS_TOKEN_EXPIRE")
+		refreshTime = os.Getenv("RFRESH_TOKEN_EXPIRE")
+	}
+
+	accessToken, err := user.GenerateToken(accessTime, os.Getenv("ACCESS_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
 
-	refresh_token, err := user.GenerateToken(os.Getenv("RFRESH_TOKEN_EXPIRE"), os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
+	refreshToken, err := user.GenerateToken(refreshTime, os.Getenv("RFRESH_TOKEN_PRIVAT"), ip)
 	if err != nil {
 		return nil, err
 	}
 
 	return &domain.TokensResponse{
-		AccessToken:  access_token,
-		RefreshToken: refresh_token,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 }
 

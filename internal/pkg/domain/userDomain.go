@@ -27,6 +27,7 @@ type (
 		Token     *string  `json:"-" gorm:"column:token;type:varchar(255);unique;index"`
 		Password  *string  `json:"-" gorm:"column:password;type:varchar(255);"`
 		Profile   *Profile `json:"profile,omitempty"`
+		Expire    bool     `json:"-" gorm:"-"`
 	}
 
 	UserRepository interface {
@@ -120,6 +121,7 @@ func (u *User) GenerateToken(expire, originalKey, ip string) (string, error) {
 	if err == nil {
 		claims["exp"] = now.Add(life).Unix()
 	}
+	claims["expire"] = err == nil
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	return token.SignedString(key)
