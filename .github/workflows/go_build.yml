@@ -30,7 +30,7 @@ jobs:
         run: go clean -modcache
 
       - name: Build
-        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend cmd/go-template/go-template.go
+        run: make build
 
       - name: Copy README.md
         run: cp .github/README.md README.md
