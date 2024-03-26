@@ -18,7 +18,7 @@ jobs:
 
       - name: Get build version
         id: getVersion
-        run: echo "version=$(cat ./go_build/configs/version.txt)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat configs/version.txt)" >> $GITHUB_OUTPUT
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -32,7 +32,7 @@ jobs:
         run: go clean -modcache
 
       - name: Build
-        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend ./go_build/cmd/go-template/go-template.go
+        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend cmd/go-template/go-template.go
 
       - name: Copy README.md
         run: cp .github/README.md README.md
