@@ -10,17 +10,13 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
 
-    defaults:
-      run:
-        working-directory: ./go_build
-
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v4
 
       - name: Get build version
         id: getVersion
-        run: echo "version=$(cat configs/version.txt)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat ${{ github.workspace }}/configs/version.txt)" >> $GITHUB_OUTPUT
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -34,19 +30,20 @@ jobs:
         run: go clean -modcache
 
       - name: Build
-        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend cmd/go-template/go-template.go
+        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend ${{ github.workspace }}/cmd/go-template/go-template.go
 
       - name: Copy README.md
         run: cp .github/README.md README.md
 
       - uses: actions/upload-artifact@v3
         with:
+
           name: go_template_${{ steps.getVersion.outputs.version }}
           path:
-            go_build/configs/.env
-            go_build/docker-compose.yml
-            go_build/Dockerfile
-            go_build/backend
-            go_build/README.md
-            go_build/Makefile
+            ${{ github.workspace }}/configs/.env
+            ${{ github.workspace }}/docker-compose.yml
+            ${{ github.workspace }}/Dockerfile
+            ${{ github.workspace }}/backend
+            ${{ github.workspace }}/README.md
+            ${{ github.workspace }}/Makefile
           if-no-files-found: error
