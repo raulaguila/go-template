@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: [ubuntu-latest]
+    defaults:
+      run:
+        working-directory: ./go_build
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v4
@@ -37,9 +40,10 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: go_template_${{ steps.getVersion.outputs.version }}
-          path: configs/.env
-            docker-compose.yml
-            Dockerfile
-            backend
-            README.md
-            Makefile
+          path:
+            go_build/configs/.env
+            go_build/docker-compose.yml
+            go_build/Dockerfile
+            go_build/backend
+            go_build/README.md
+            go_build/Makefile
