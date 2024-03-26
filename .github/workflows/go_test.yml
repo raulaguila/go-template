@@ -1,13 +1,10 @@
-name: go-test
+name: go_test
 
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
-permissions:
-  contents: read
 
 jobs:
   Test:
