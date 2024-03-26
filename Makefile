@@ -23,7 +23,7 @@ compose-up: ## Run docker compose up for create and start containers
 
 .PHONY: compose-build
 compose-build: ## Run docker compose up --build for create and start containers
-	@@chmod +x backend && ${COMPOSE_COMMAND} up -d --build
+	@chmod +x backend && ${COMPOSE_COMMAND} up -d --build
 
 .PHONY: compose-down
 compose-down: ## Run docker compose down for stopping and removing containers and networks

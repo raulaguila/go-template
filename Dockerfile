@@ -7,7 +7,8 @@ RUN apk add --no-cache dumb-init
 WORKDIR /app
 
 # Copy files to docker image
-COPY . .
+COPY configs/.env configs/.env
+COPY backend .
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 
