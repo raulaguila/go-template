@@ -35,9 +35,8 @@ jobs:
       - name: Copy README.md
         run: cp .github/README.md README.md
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-
           name: go_template_${{ steps.getVersion.outputs.version }}
           path:
             ${{ github.workspace }}/configs/.env
@@ -47,3 +46,4 @@ jobs:
             ${{ github.workspace }}/README.md
             ${{ github.workspace }}/Makefile
           if-no-files-found: error
+          overwrite: true
