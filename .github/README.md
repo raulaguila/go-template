@@ -22,11 +22,10 @@
 
 - This API template is a user-friendly solution designed to serve as the foundation for more complex APIs, including profile registration and management, user basic registration, management and authentication, using gorm orm with PostgreSQL as database, gofiber framework and internationalization with english and portuguese messages.
 
-## Requirements/dependencies
+## Requirements
 
 - Docker
 - Docker compose
-- Golang (>= 1.21)
 
 ## Getting Started
 
@@ -34,31 +33,29 @@
 
 ```sh
 Usage:
-        make [COMMAND]
-        make help
+      make [COMMAND]
+      make help
 
 Commands:
 
 help                           Display help screen
 init                           Create environment variables
+build                          Build the application from source code
 compose-up                     Run docker compose up for create and start containers
-compose-build                  Run docker compose up build for create and start containers
-compose-down                   Run docker compose down for stopping and removing containers, networks
-compose-remove                 Run docker compose down for stopping and removing containers, networks, volumes
+compose-build                  Run docker compose up --build for create and start containers
+compose-down                   Run docker compose down for stopping and removing containers and networks
+compose-remove                 Run docker compose down for stopping and removing containers, networks and volumes
 compose-exec                   Run docker compose exec to access bash container
 compose-log                    Run docker compose logs to show logger container
 compose-top                    Run docker compose top to display the running containers processes
-go-fmt                         Run go fmt
-go-vet                         Run go vet
-go-test                        Run go test
-go-test-cover                  Run go test with coverage report
-go-test-cover-html             Run go test with HTML coverage report
 ```
 
-- Build and run project
+- Run project
 
+1. Download and extract the latest build [release](https://github.com/raulaguila/go-template/releases)
+1. Open the terminal in the release folder
+1. Run:
 ```sh
-make init
 make compose-build
 ```
 

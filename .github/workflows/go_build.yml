@@ -45,5 +45,6 @@ jobs:
             backend
             README.md
             Makefile
+            test/
           if-no-files-found: error
           overwrite: true
