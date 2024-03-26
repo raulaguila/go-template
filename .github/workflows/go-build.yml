@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: [code-linux, code-default]
+    runs-on: [ubuntu-latest]
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         run: make init
 
       - name: Remove object and cached files
-        run: go clea -modcache
+        run: go clean -modcache
 
       - name: Build
         run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend cmd/go-template/go-template.go
