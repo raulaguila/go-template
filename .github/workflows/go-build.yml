@@ -33,17 +33,17 @@ jobs:
         run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend ${{ github.workspace }}/cmd/go-template/go-template.go
 
       - name: Copy README.md
-        run: cp .github/README.md README.md
+        run: cp ${{ github.workspace }}/.github/README.md ${{ github.workspace }}/README.md
 
       - uses: actions/upload-artifact@v4
         with:
           name: go_template_${{ steps.getVersion.outputs.version }}
-          path:
-            configs/.env
-            docker-compose.yml
-            Dockerfile
-            backend
-            README.md
-            Makefile
+          path: |
+            ${{ github.workspace }}/configs/.env
+            ${{ github.workspace }}/docker-compose.yml
+            ${{ github.workspace }}/Dockerfile
+            ${{ github.workspace }}/backend
+            ${{ github.workspace }}/README.md
+            ${{ github.workspace }}/Makefile
           if-no-files-found: error
           overwrite: true
