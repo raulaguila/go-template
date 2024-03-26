@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"embed"
 	"os"
 	"path"
 	"strings"
@@ -14,9 +15,17 @@ import (
 	"golang.org/x/text/language"
 )
 
+//go:embed i18n/*
+var viewsfs embed.FS
+
+//go:embed version.txt
+var version string
+
 func init() {
 	err := godotenv.Load(path.Join("configs", ".env"))
 	helpers.PanicIfErr(err)
+
+	os.Setenv("SYS_VERSION", version)
 
 	time.Local, err = time.LoadLocation(os.Getenv("TZ"))
 	helpers.PanicIfErr(err)
@@ -28,7 +37,7 @@ func loadMessages() error {
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	for _, lang := range strings.Split(os.Getenv("SYS_LANGUAGES"), ",") {
-		if _, err := bundle.LoadMessageFile(path.Join("configs", "i18n", "active."+lang+".toml")); err != nil {
+		if _, err := bundle.LoadMessageFileFS(viewsfs, path.Join("i18n", "active."+lang+".toml")); err != nil {
 			return err
 		}
 

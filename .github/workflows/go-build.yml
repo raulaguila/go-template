@@ -2,44 +2,44 @@ name: go-build
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
+    branches: ["main"]
   pull_request:
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
-
-permissions:
-  contents: read
+    branches: ["main"]
 
 jobs:
-  Build:
-    name: Golang build
-
-    strategy:
-      matrix:
-        go: [1.21.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
+  build:
+    runs-on: [code-linux, code-default]
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Go
+      - name: Get build version
+        id: getVersion
+        run: echo "version=$(cat configs/version.txt)" >> $GITHUB_OUTPUT
+
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
-          cache: false
+          go-version: "1.22"
 
-      - name: Run Build
-        run: go build -v ./...
+      - name: Environment file
+        run: make init
 
-      - name: Run Test
-        run: go test -v ./...
+      - name: Remove object and cached files
+        run: go clea -modcache
+
+      - name: Build
+        run: CGO_ENABLED=0 go build -ldflags "-w -s" -o backend cmd/go-template/go-template.go
+
+      - name: Copy README.md
+        run: cp .github/README.md README.md
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: go_template_${{ steps.getVersion.outputs.version }}
+          path: configs/.env
+            docker-compose.yml
+            Dockerfile
+            backend
+            README.md
+            Makefile
