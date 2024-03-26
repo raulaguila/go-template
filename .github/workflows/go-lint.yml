@@ -2,17 +2,9 @@ name: go-lint
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
+    branches: ["main"]
   pull_request:
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -21,12 +13,7 @@ jobs:
   Lint:
     name: Golang lint
 
-    strategy:
-      matrix:
-        go: [1.21.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: [ubuntu-latest]
 
     steps:
       - name: Fetch Repository
@@ -35,12 +22,11 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
+          go-version: "1.22"
           cache: false
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
-        if: matrix.os == 'ubuntu-latest'
         with:
           # Require: The version of golangci-lint to use.
           # When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.

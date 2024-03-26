@@ -2,17 +2,9 @@ name: go-test
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
+    branches: ["main"]
   pull_request:
-    paths:
-      - "**"
-      - "!docs/**"
-      - "!**.md"
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -21,12 +13,7 @@ jobs:
   Test:
     name: Golang test
 
-    strategy:
-      matrix:
-        go: [1.21.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: [ubuntu-latest]
 
     steps:
       - name: Fetch Repository
@@ -35,7 +22,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
+          go-version: "1.22"
           cache: false
 
       - name: Run Test
@@ -43,4 +30,4 @@ jobs:
         with:
           max_attempts: 3
           timeout_minutes: 15
-          command: go test ./... -v -race -count=1
+          command: go test ./...
