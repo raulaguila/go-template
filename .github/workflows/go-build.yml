@@ -9,9 +9,11 @@ on:
 jobs:
   build:
     runs-on: [ubuntu-latest]
+
     defaults:
       run:
         working-directory: ./go_build
+
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v4
