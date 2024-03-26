@@ -13,10 +13,10 @@
     <img src="https://goreportcard.com/badge/github.com/raulaguila/go-template?style=flat&labelColor=0D1117">
   </a>
   <a href="https://github.com/raulaguila/go-template/actions?query=workflow%3Ago-test" target="_blank" style="text-decoration: none;">
-    <img src="https://github.com/raulaguila/go-template/actions/workflows/go-test.yml/badge.svg">
+    <img src="https://github.com/raulaguila/go-template/actions/workflows/go_test.yml/badge.svg">
   </a>
   <a href="https://github.com/raulaguila/go-template/actions?query=workflow%3Ago-build" target="_blank" style="text-decoration: none;">
-    <img src="https://github.com/raulaguila/go-template/actions/workflows/go-build.yml/badge.svg">
+    <img src="https://github.com/raulaguila/go-template/actions/workflows/go_build.yml/badge.svg">
   </a>
 </p>
 
